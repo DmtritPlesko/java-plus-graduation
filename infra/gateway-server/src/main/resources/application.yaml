@@ -1,0 +1,27 @@
+server:
+  port: 8080
+
+
+spring:
+  config:
+    import: configserver:http://localhost:8888
+  application:
+    name: gateway
+  cloud:
+    gateway:
+      routes:
+        - id: main-service
+          uri: lb://main-service
+          predicates:
+            - Path=/main-service/**
+          filters:
+            - StripPrefix=1
+          retry:
+            attempts: 3
+            backoff:
+              first-backoff: 1000ms
+              max-backoff: 5000ms
+              factor: 2
+            timeout:
+              connect: 5000ms
+              read: 5000ms

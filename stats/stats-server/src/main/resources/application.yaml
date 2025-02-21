@@ -1,0 +1,11 @@
+server:
+  port: 9090
+
+spring:
+  application:
+    name: stats-service
+  cloud:
+    config:
+      fail-fast: true
+  config:
+    import: "configserver:"
