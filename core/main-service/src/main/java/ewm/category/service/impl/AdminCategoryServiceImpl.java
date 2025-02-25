@@ -33,7 +33,6 @@ public class AdminCategoryServiceImpl implements AdminCategoryService {
     @Transactional
     public void deleteBy(long id) {
         Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Категории с id = " + id + " не существует"));
         if (eventRepository.existsByCategoryId(id)) {
             throw new ConflictException("Обьект имеет зависимость с событием");
         }
@@ -44,8 +43,6 @@ public class AdminCategoryServiceImpl implements AdminCategoryService {
     @Transactional
     public CategoryDto updateBy(long id, NewCategoryDto categoryDto) {
         Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Категория не найдена"));
-
         category.setName(categoryDto.getName());
 
         return categoryMapper.toCategoryDto(categoryRepository.save(category));

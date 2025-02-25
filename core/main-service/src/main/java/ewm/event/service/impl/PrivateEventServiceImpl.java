@@ -60,17 +60,6 @@ public class PrivateEventServiceImpl implements PrivateEventService {
         Map<Long, Long> confirmedRequestsMap = getConfirmedRequestsMap(eventIds);
 
         Set<String> uris = events.stream()
-                .map(event -> "/events/" + event.getId()).collect(Collectors.toSet());
-
-        LocalDateTime start = events
-                .stream()
-                .min(Comparator.comparing(EventShortDto::getEventDate))
-                .orElseThrow(() -> new NotFoundException("Даты не заданы"))
-                .getEventDate();
-
-        Map<String, Long> viewMap = statRestClient
-                .stats(start, LocalDateTime.now(), uris.stream().toList(), false).stream()
-                .collect(Collectors.groupingBy(ViewStatsDto::getUri, Collectors.summingLong(ViewStatsDto::getHits)));
 
         return events.stream().peek(shortDto -> {
             shortDto.setViews(viewMap.getOrDefault("/events/" + shortDto.getId(), 0L));
@@ -92,7 +81,6 @@ public class PrivateEventServiceImpl implements PrivateEventService {
     @Transactional(readOnly = true)
     public EventFullDto getBy(long userId, long eventId) {
         EventFullDto eventFullDto = eventRepository.findById(eventId).map(eventMapper::toEventFullDto)
-                .orElseThrow(() -> new NotFoundException("Событие не найдено"));
         if (eventFullDto.getInitiator().getId() != userId) {
             throw new PermissionException("Доступ запрещен");
         }
@@ -103,7 +91,6 @@ public class PrivateEventServiceImpl implements PrivateEventService {
     @Transactional
     public EventFullDto updateBy(long userId, long eventId, UpdateEventUserRequest updateEventUserRequest) {
         Event event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new NotFoundException("Событие с с id = " + eventId + " не найдено"));
         if (event.getInitiator().getId() != userId) {
             throw new PermissionException("Доступ запрещен");
         }
@@ -118,30 +105,11 @@ public class PrivateEventServiceImpl implements PrivateEventService {
         QParticipationRequest qRequest = QParticipationRequest.participationRequest;
 
         return jpaQueryFactory
-                .select(qRequest.event.id.as("eventId"), qRequest.count().as("confirmedRequests"))
-                .from(qRequest)
-                .where(qRequest.event.id.in(eventIds).and(qRequest.status.eq(RequestStatus.CONFIRMED)))
-                .groupBy(qRequest.event.id)
-                .fetch()
-                .stream()
-                .collect(Collectors.toMap(
-                        tuple -> tuple.get(0, Long.class),
-                        tuple -> Optional.ofNullable(tuple.get(1, Long.class)).orElse(0L))
-                );
+
     }
 
     List<EventShortDto> getEvents(Pageable pageRequest, BooleanExpression eventQueryExpression) {
         return jpaQueryFactory
-                .selectFrom(QEvent.event)
-                .leftJoin(QEvent.event.category, QCategory.category)
-                .fetchJoin()
-                .leftJoin(QEvent.event.initiator, QUser.user)
-                .fetchJoin()
-                .where(eventQueryExpression)
-                .offset(pageRequest.getOffset())
-                .limit(pageRequest.getPageSize())
-                .stream()
-                .map(eventMapper::toEventShortDto)
-                .toList();
+
     }
 }

@@ -48,17 +48,6 @@ public class PublicEventServiceImpl implements PublicEventService {
         Map<Long, Long> confirmedRequestsMap = getConfirmedRequestsMap(eventIds);
 
         Set<String> uris = events.stream()
-                .map(event -> "/events/" + event.getId()).collect(Collectors.toSet());
-
-        LocalDateTime start = events
-                .stream()
-                .min(Comparator.comparing(EventShortDto::getEventDate))
-                .orElseThrow(() -> new NotFoundException("Даты не заданы"))
-                .getEventDate();
-
-        Map<String, Long> viewMap = statRestClient
-                .stats(start, LocalDateTime.now(), uris.stream().toList(), false).stream()
-                .collect(Collectors.groupingBy(ViewStatsDto::getUri, Collectors.summingLong(ViewStatsDto::getHits)));
 
         return events.stream().peek(shortDto -> {
             shortDto.setViews(viewMap.getOrDefault("/events/" + shortDto.getId(), 0L));
@@ -70,7 +59,7 @@ public class PublicEventServiceImpl implements PublicEventService {
     @Transactional(readOnly = true)
     public EventFullDto getBy(long eventId) {
         EventFullDto event = eventRepository.findById(eventId).map(eventMapper::toEventFullDto)
-                .orElseThrow(() -> new NotFoundException("Мероприятие с Id =" + eventId + " не найдено"));
+
 
         if (!event.getState().equals(EventState.PUBLISHED)) {
             throw new NotFoundException("Событие id = " + eventId + " не опубликовано");
@@ -80,7 +69,7 @@ public class PublicEventServiceImpl implements PublicEventService {
         LocalDateTime start = now.minusYears(10);
 
         statRestClient.stats(start, now, List.of("/events/" + eventId), true)
-                .forEach(viewStatsDto -> event.setViews(viewStatsDto.getHits()));
+
 
         long confirmedRequests = requestRepository.countAllByEventIdAndStatusIs(eventId, RequestStatus.CONFIRMED);
         event.setConfirmedRequests(confirmedRequests);
@@ -91,31 +80,11 @@ public class PublicEventServiceImpl implements PublicEventService {
         QParticipationRequest qRequest = QParticipationRequest.participationRequest;
 
         return jpaQueryFactory
-                .select(qRequest.event.id.as("eventId"), qRequest.count().as("confirmedRequests"))
-                .from(qRequest)
-                .where(qRequest.event.id.in(eventIds).and(qRequest.status.eq(RequestStatus.CONFIRMED)))
-                .groupBy(qRequest.event.id)
-                .fetch()
-                .stream()
-                .collect(Collectors.toMap(
-                        tuple -> tuple.get(0, Long.class),
-                        tuple -> Optional.ofNullable(tuple.get(1, Long.class)).orElse(0L))
-                );
+
     }
 
     List<EventShortDto> getEvents(Pageable pageRequest, BooleanBuilder eventQueryExpression) {
         return jpaQueryFactory
-                .selectFrom(QEvent.event)
-                .leftJoin(QEvent.event.category, QCategory.category)
-                .fetchJoin()
-                .leftJoin(QEvent.event.initiator, QUser.user)
-                .fetchJoin()
-                .where(eventQueryExpression)
-                .offset(pageRequest.getOffset())
-                .limit(pageRequest.getPageSize())
-                .stream()
-                .map(eventMapper::toEventShortDto)
-                .toList();
     }
 
     BooleanBuilder buildExpression(PublicEventParam eventParam) {
@@ -123,19 +92,6 @@ public class PublicEventServiceImpl implements PublicEventService {
 
         eventQueryExpression.and(QEvent.event.state.eq(EventState.PUBLISHED));
         Optional.ofNullable(eventParam.getRangeStart())
-                .ifPresent(rangeStart -> eventQueryExpression.and(QEvent.event.eventDate.after(rangeStart)));
-        Optional.ofNullable(eventParam.getRangeEnd())
-                .ifPresent(rangeEnd -> eventQueryExpression.and(QEvent.event.eventDate.before(eventParam.getRangeEnd())));
-        Optional.ofNullable(eventParam.getPaid())
-                .ifPresent(paid -> eventQueryExpression.and(QEvent.event.paid.eq(paid)));
-        Optional.ofNullable(eventParam.getCategories())
-                .filter(category -> !category.isEmpty())
-                .ifPresent(category -> eventQueryExpression.and(QEvent.event.category.id.in(category)));
-        Optional.ofNullable(eventParam.getText())
-                .filter(text -> !text.isEmpty()).ifPresent(text -> {
-                    eventQueryExpression.and(QEvent.event.annotation.containsIgnoreCase(text));
-                    eventQueryExpression.or(QEvent.event.description.containsIgnoreCase(text));
-                });
         return eventQueryExpression;
     }
 }
