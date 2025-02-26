@@ -35,15 +35,15 @@ public class PublicRequestServiceImpl implements PublicRequestService {
     @Transactional(readOnly = true)
     public List<ParticipationRequestDto> getSentBy(long userId) {
         return requestRepository.findAllByRequesterId(userId)
-            .stream().map(requestMapper::toParticipantRequestDto).toList();
+                .stream().map(requestMapper::toParticipantRequestDto).toList();
     }
 
     @Override
     public ParticipationRequestDto send(long userId, long eventId) {
         User requester = userRepository.findById(userId)
-            .orElseThrow(() -> new NotFoundException("Пользователь с id = " + userId + " не найден"));
+                .orElseThrow(() -> new NotFoundException("Пользователь с id = " + userId + " не найден"));
         Event event = eventRepository.findById(eventId)
-            .orElseThrow(() -> new NotFoundException("Событие с id = " + eventId + " не найдено"));
+                .orElseThrow(() -> new NotFoundException("Событие с id = " + eventId + " не найдено"));
         if (requester.getId().equals(event.getInitiator().getId())) {
             throw new ConflictException("Нельзя делать запрос на свое событие");
         }
@@ -68,10 +68,10 @@ public class PublicRequestServiceImpl implements PublicRequestService {
     @Override
     public ParticipationRequestDto cancel(long requestId, long userId) {
         userRepository.findById(userId)
-            .orElseThrow(() -> new NotFoundException("Requester с таким Id не найден"));
+                .orElseThrow(() -> new NotFoundException("Requester с таким Id не найден"));
 
         ParticipationRequest participationRequest = requestRepository.findById(requestId)
-            .orElseThrow(() -> new NotFoundException("Запрос не найден"));
+                .orElseThrow(() -> new NotFoundException("Запрос не найден"));
 
         if (userId != participationRequest.getRequester().getId()) {
             throw new PermissionException("Доступ запрещен. Отменять может только владелец");

@@ -21,7 +21,7 @@ import java.time.LocalDateTime;
 @RestControllerAdvice
 public class ErrorHandler {
     @ExceptionHandler({IllegalArgumentException.class, MethodArgumentNotValidException.class,
-        ConstraintViolationException.class, WebExchangeBindException.class, MissingServletRequestParameterException.class})
+            ConstraintViolationException.class, WebExchangeBindException.class, MissingServletRequestParameterException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ApiError handleMethodArgumentValidException(Exception exception) {
         StringWriter stringWriter = new StringWriter();
@@ -31,26 +31,26 @@ public class ErrorHandler {
         String cause = "Ошибка при вводе значений";
         log.info("{}: {}", cause, exception.getMessage());
         return ApiError.builder()
-            .errors(errors)
-            .message(exception.getMessage())
-            .reason(cause)
-            .status(HttpStatus.BAD_REQUEST.toString())
-            .timestamp(LocalDateTime.now())
-            .build();
+                .errors(errors)
+                .message(exception.getMessage())
+                .reason(cause)
+                .status(HttpStatus.BAD_REQUEST.toString())
+                .timestamp(LocalDateTime.now())
+                .build();
     }
 
     @ExceptionHandler({ValidationException.class, DataAccessException.class, WrongSortMethodException.class,
-        HandlerMethodValidationException.class})
+            HandlerMethodValidationException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ApiError handleValidationException(Exception exception) {
         String cause = "Ошибка при валидации данных";
         log.info("{}: {}", cause, exception.getMessage());
         return ApiError.builder()
-            .message(exception.getMessage())
-            .reason(cause)
-            .status(HttpStatus.BAD_REQUEST.toString())
-            .timestamp(LocalDateTime.now())
-            .build();
+                .message(exception.getMessage())
+                .reason(cause)
+                .status(HttpStatus.BAD_REQUEST.toString())
+                .timestamp(LocalDateTime.now())
+                .build();
     }
 
     @ExceptionHandler({ConflictException.class, DataIntegrityViolationException.class})
@@ -59,11 +59,11 @@ public class ErrorHandler {
         String cause = "Нарушение целостности данных";
         log.info("{}: {}", cause, exception.getMessage());
         return ApiError.builder()
-            .message(exception.getMessage())
-            .reason(cause)
-            .status(HttpStatus.CONFLICT.toString())
-            .timestamp(LocalDateTime.now())
-            .build();
+                .message(exception.getMessage())
+                .reason(cause)
+                .status(HttpStatus.CONFLICT.toString())
+                .timestamp(LocalDateTime.now())
+                .build();
     }
 
     @ExceptionHandler
@@ -72,11 +72,11 @@ public class ErrorHandler {
         String cause = "Ошибка при поиске данных";
         log.info("{}: {}", cause, exception.getMessage());
         return ApiError.builder()
-            .message(exception.getMessage())
-            .reason(cause)
-            .status(HttpStatus.NOT_FOUND.toString())
-            .timestamp(LocalDateTime.now())
-            .build();
+                .message(exception.getMessage())
+                .reason(cause)
+                .status(HttpStatus.NOT_FOUND.toString())
+                .timestamp(LocalDateTime.now())
+                .build();
     }
 
     @ExceptionHandler
@@ -89,11 +89,11 @@ public class ErrorHandler {
         String cause = "Внутренняя ошибка сервера";
         log.info("{}: {}", cause, exception.getMessage());
         return ApiError.builder()
-            .errors(errors)
-            .message(exception.getMessage())
-            .reason(cause)
-            .status(HttpStatus.INTERNAL_SERVER_ERROR.toString())
-            .timestamp(LocalDateTime.now())
-            .build();
+                .errors(errors)
+                .message(exception.getMessage())
+                .reason(cause)
+                .status(HttpStatus.INTERNAL_SERVER_ERROR.toString())
+                .timestamp(LocalDateTime.now())
+                .build();
     }
 }

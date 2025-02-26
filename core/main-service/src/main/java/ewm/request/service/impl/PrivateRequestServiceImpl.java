@@ -36,16 +36,16 @@ public class PrivateRequestServiceImpl implements PrivateRequestService {
     @Transactional(readOnly = true)
     public List<ParticipationRequestDto> getReceivedBy(long userId, long eventId) {
         return requestRepository.findAllByEventIdAndEventInitiatorId(eventId, userId).stream()
-            .map(requestMapper::toParticipantRequestDto).toList();
+                .map(requestMapper::toParticipantRequestDto).toList();
     }
 
     @Override
     @Transactional
     public EventRequestStatusUpdateResult update(long userId, long eventId, EventRequestStatusUpdateRequest updateRequest) {
         userRepository.findById(userId)
-            .orElseThrow(() -> new NotFoundException("Пользователь с Id = " + userId + " не найден"));
+                .orElseThrow(() -> new NotFoundException("Пользователь с Id = " + userId + " не найден"));
         Event event = eventRepository.findById(eventId).filter(event1 -> event1.getInitiator().getId().equals(userId))
-            .orElseThrow(() -> new NotFoundException("Событие с Id = " + eventId + " не найден"));
+                .orElseThrow(() -> new NotFoundException("Событие с Id = " + eventId + " не найден"));
 
         List<Long> requestsIds = updateRequest.getRequestIds();
         long confirmedRequests = requestRepository.countAllByEventIdAndStatusIs(eventId, RequestStatus.CONFIRMED);
@@ -72,7 +72,7 @@ public class PrivateRequestServiceImpl implements PrivateRequestService {
                 }
             }
             case REJECTED ->
-                requests.forEach(participationRequest -> participationRequest.setStatus(RequestStatus.REJECTED));
+                    requests.forEach(participationRequest -> participationRequest.setStatus(RequestStatus.REJECTED));
         }
 
         EventRequestStatusUpdateResult result = new EventRequestStatusUpdateResult();

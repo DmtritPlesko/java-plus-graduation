@@ -13,6 +13,7 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 
 @Slf4j
@@ -39,6 +40,12 @@ public class StatServiceImpl implements StatService {
 
         if (params.getUnique() == null) {
             params.setUnique(false);
+        }
+
+        if (params.getStart() == null) {
+            throw new ValidationException("Время начала не представлено");
+        } else if (params.getEnd() == null) {
+            throw new ValidationException("Время конца не указано");
         }
 
         if (params.getStart().isAfter(params.getEnd())) {

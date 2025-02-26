@@ -27,10 +27,10 @@ public class StatRestClientImpl implements StatRestClient {
 
     public StatRestClientImpl(@Value("${stat-server.uri}") String baseUri) {
         this.restTemplate = new RestTemplateBuilder()
-            .rootUri(baseUri)
-            .setConnectTimeout(Duration.ofSeconds(10))
-            .setReadTimeout(Duration.ofSeconds(10))
-            .build();
+                .rootUri(baseUri)
+                .setConnectTimeout(Duration.ofSeconds(10))
+                .setReadTimeout(Duration.ofSeconds(10))
+                .build();
     }
 
     public void addHit(EndpointHitDto hitDto) {
@@ -44,15 +44,15 @@ public class StatRestClientImpl implements StatRestClient {
     public List<ViewStatsDto> stats(LocalDateTime start, LocalDateTime end, List<String> uris, Boolean unique) {
         try {
             String uri = UriComponentsBuilder.fromPath("/stats")
-                .queryParam("start", start)
-                .queryParam("end", end)
-                .queryParam("uris", String.join(",", uris))
-                .queryParam("unique", unique)
-                .toUriString();
+                    .queryParam("start", start)
+                    .queryParam("end", end)
+                    .queryParam("uris", String.join(",", uris))
+                    .queryParam("unique", unique)
+                    .toUriString();
 
             ResponseEntity<List<ViewStatsDto>> response = restTemplate.exchange(
-                uri, HttpMethod.GET, null, new ParameterizedTypeReference<>() {
-                });
+                    uri, HttpMethod.GET, null, new ParameterizedTypeReference<>() {
+                    });
             return response.getBody();
         } catch (Exception e) {
             log.info("Ошибка при запросе к эндпоинту /stats {}", e.getMessage());

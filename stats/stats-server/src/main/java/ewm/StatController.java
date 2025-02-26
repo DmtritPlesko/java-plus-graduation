@@ -27,7 +27,7 @@ public class StatController {
 
     @GetMapping("/stats")
     @ResponseStatus(HttpStatus.OK)
-    public List<ViewStatsDto> stats(@Valid @ModelAttribute RequestParamDto requestParamDto) {
+    public List<ViewStatsDto> stats(@ModelAttribute RequestParamDto requestParamDto) {
         return statService.stats(requestParamDto);
     }
 }
