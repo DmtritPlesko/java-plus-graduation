@@ -69,8 +69,9 @@ public class PublicEventServiceImpl implements PublicEventService {
     @Override
     @Transactional(readOnly = true)
     public EventFullDto getBy(long eventId) {
-        EventFullDto event = eventRepository.findById(eventId).map(eventMapper::toEventFullDto)
-            .orElseThrow(() -> new NotFoundException("Мероприятие с Id =" + eventId + " не найдено"));
+        EventFullDto event = eventRepository.findById(eventId)
+                .map(eventMapper::toEventFullDto)
+                .orElseThrow(() -> new NotFoundException("Мероприятие с Id = " + eventId + " не найдено"));
 
         if (!event.getState().equals(EventState.PUBLISHED)) {
             throw new NotFoundException("Событие id = " + eventId + " не опубликовано");
@@ -80,10 +81,11 @@ public class PublicEventServiceImpl implements PublicEventService {
         LocalDateTime start = now.minusYears(10);
 
         statRestClient.stats(start, now, List.of("/events/" + eventId), true)
-            .forEach(viewStatsDto -> event.setViews(viewStatsDto.getHits()));
+                .forEach(viewStatsDto -> event.setViews(viewStatsDto.getHits()));
 
         long confirmedRequests = requestRepository.countAllByEventIdAndStatusIs(eventId, RequestStatus.CONFIRMED);
         event.setConfirmedRequests(confirmedRequests);
+
         return event;
     }
 

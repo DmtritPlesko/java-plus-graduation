@@ -4,13 +4,12 @@ import ewm.dto.EndpointHitDto;
 import ewm.dto.ViewStatsDto;
 import jakarta.validation.Valid;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
-@FeignClient(name = "stats-server")
+@FeignClient(name = "stats-server",
+        configuration = StatsFeignConfig.class)
 public interface StatFeignClient {
     @GetMapping("/stats")
     List<ViewStatsDto> stats(@RequestParam("start") String start,
@@ -19,6 +18,6 @@ public interface StatFeignClient {
                              @RequestParam("unique") boolean unique);
 
     @PostMapping("/hit")
-    void hit(@Valid @RequestBody EndpointHitDto endpointHitDto);
+    void hit(@Valid @ModelAttribute EndpointHitDto endpointHitDto);
 
 }

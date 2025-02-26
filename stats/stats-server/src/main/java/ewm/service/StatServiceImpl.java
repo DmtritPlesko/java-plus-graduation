@@ -13,8 +13,6 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
@@ -42,22 +40,23 @@ public class StatServiceImpl implements StatService {
         if (params.getUnique() == null) {
             params.setUnique(false);
         }
-        if (params.getStart().isAfter(LocalDateTime.now())) {
+
+        if (params.getStart().isAfter(params.getEnd())) {
             throw new ValidationException("Время начала не может быть в прошлом");
         }
 
         List<ViewStatsDto> statsToReturn;
 
-        boolean paramsIsExists = params.getUris() == null || params.getUris().isEmpty();
+        boolean paramsIsNotExists = params.getUris() == null || params.getUris().isEmpty();
 
         if (!params.getUnique()) {
-            if (paramsIsExists) {
+            if (paramsIsNotExists) {
                 statsToReturn = hitRepository.getAllStats(params.getStart(), params.getEnd());
             } else {
                 statsToReturn = hitRepository.getStats(params.getUris(), params.getStart(), params.getEnd());
             }
         } else {
-            if (paramsIsExists) {
+            if (paramsIsNotExists) {
                 statsToReturn = hitRepository.getAllStatsUniqueIp(params.getStart(), params.getEnd());
             } else {
                 statsToReturn = hitRepository.getStatsUniqueIp(params.getUris(), params.getStart(), params.getEnd());
@@ -66,5 +65,6 @@ public class StatServiceImpl implements StatService {
 
         log.info("Данные статистики {} успешно считаны из БД", statsToReturn);
         return statsToReturn;
+
     }
 }

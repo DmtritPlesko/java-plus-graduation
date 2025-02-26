@@ -35,6 +35,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class AdminEventServiceImpl implements AdminEventService {
+
     final EventRepository eventRepository;
     final EventMapper eventMapper;
     final JPAQueryFactory jpaQueryFactory;
