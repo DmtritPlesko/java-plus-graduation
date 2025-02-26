@@ -12,9 +12,9 @@
     <artifactId>stats</artifactId>
 
     <modules>
-        <module>stat-client</module>
         <module>stat-dto</module>
         <module>stats-server</module>
+        <module>stat-client</module>
     </modules>
 
     <properties>

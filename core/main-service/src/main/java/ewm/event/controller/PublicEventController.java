@@ -28,7 +28,7 @@ public class PublicEventController {
     final StatRestClient statRestClient;
 
     @GetMapping
-    List<EventShortDto> getAllBy(@Valid @RequestBody PublicEventParam publicEventParam,
+    List<EventShortDto> getAllBy(@Valid @ModelAttribute PublicEventParam publicEventParam,
                                  @RequestParam(defaultValue = "0") int from,
                                  @RequestParam(defaultValue = "10") int size,
                                  HttpServletRequest request) {

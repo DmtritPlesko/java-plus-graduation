@@ -24,6 +24,7 @@ public class AdminEventController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
+
     public List<EventFullDto> getAllBy(@Validated @ModelAttribute AdminEventParam adminEventParam,
                                        @RequestParam(defaultValue = "0") int from,
                                        @RequestParam(defaultValue = "10") int size) {
