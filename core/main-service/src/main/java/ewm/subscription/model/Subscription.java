@@ -27,7 +27,7 @@ public class Subscription {
     @JoinColumn(name = "follower_id")
     User follower;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "following_id")
     User following;
 }

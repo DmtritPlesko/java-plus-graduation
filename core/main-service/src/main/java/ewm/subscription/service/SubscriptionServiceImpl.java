@@ -1,6 +1,8 @@
 package ewm.subscription.service;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import ewm.exception.ConflictException;
+import ewm.exception.ValidationException;
 import ewm.subscription.dto.SubscriptionDto;
 import ewm.subscription.mapper.SubscriptionMapper;
 import ewm.subscription.model.QSubscription;
@@ -10,9 +12,10 @@ import ewm.user.dto.UserShortDto;
 import ewm.user.mappers.UserMapper;
 import ewm.user.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import org.springframework.data.domain.Pageable;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -60,10 +63,12 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
     @Override
     public SubscriptionDto addFollow(long userId, long followingId) {
-
-        return subMapper.
-                toSubscriptionDto(subRepository.
-                        save(subMapper.toSubscription(
+        if (userId == followingId) {
+            throw new ConflictException("Невозможно подписаться на себя");
+        }
+        return subMapper
+                .toSubscriptionDto(subRepository
+                        .save(subMapper.toSubscription(
                                 new Subscription(),
                                 userService.getBy(userId),
                                 userService.getBy(followingId)
@@ -72,6 +77,14 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
     @Override
     public void deleteFollow(long userId, long followingId) {
-        subRepository.deleteFollow(userId,followingId);
+
+        Optional<Subscription> subscription = subRepository.findByFollowingId(followingId);
+
+        if (subscription.isEmpty()) {
+            throw new ValidationException("Нет такого подписчика");
+        }
+
+        subRepository.deleteById(subscription.get().getId());
+
     }
 }

@@ -4,7 +4,6 @@ import ewm.subscription.dto.SubscriptionDto;
 import ewm.subscription.model.Subscription;
 import ewm.user.dto.UserDto;
 import ewm.user.mappers.UserMapper;
-import ewm.user.model.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
