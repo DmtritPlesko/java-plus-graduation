@@ -14,7 +14,7 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 import java.util.List;
 
 @Mapper(componentModel = "spring", uses = {EventMapper.class},
-    nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface CompilationMapper {
     CompilationDto toCompilationDto(Compilation compilation);
 
@@ -23,9 +23,9 @@ public interface CompilationMapper {
     @Mapping(target = "pinned", source = "compilationDto.pinned")
     @Mapping(target = "events", source = "events")
     Compilation toUpdateCompilation(
-        @MappingTarget Compilation compilation,
-        UpdateCompilationRequest compilationDto,
-        List<Event> events
+            @MappingTarget Compilation compilation,
+            UpdateCompilationRequest compilationDto,
+            List<Event> events
     );
 
     @Mapping(target = "id", ignore = true)

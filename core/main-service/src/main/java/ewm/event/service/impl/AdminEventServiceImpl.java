@@ -50,17 +50,17 @@ public class AdminEventServiceImpl implements AdminEventService {
         Map<Long, Long> confirmedRequestsMap = getConfirmedRequestsMap(eventIds);
 
         Set<String> uris = events.stream()
-            .map(event -> "/events/" + event.getId()).collect(Collectors.toSet());
+                .map(event -> "/events/" + event.getId()).collect(Collectors.toSet());
 
         LocalDateTime start = events
-            .stream()
-            .min(Comparator.comparing(EventFullDto::getEventDate))
-            .orElseThrow(() -> new NotFoundException("Даты не заданы"))
-            .getEventDate();
+                .stream()
+                .min(Comparator.comparing(EventFullDto::getEventDate))
+                .orElseThrow(() -> new NotFoundException("Даты не заданы"))
+                .getEventDate();
 
         Map<String, Long> viewMap = statRestClient
-            .stats(start, LocalDateTime.now(), uris.stream().toList(), false).stream()
-            .collect(Collectors.groupingBy(ViewStatsDto::getUri, Collectors.summingLong(ViewStatsDto::getHits)));
+                .stats(start, LocalDateTime.now(), uris.stream().toList(), false).stream()
+                .collect(Collectors.groupingBy(ViewStatsDto::getUri, Collectors.summingLong(ViewStatsDto::getHits)));
 
         return events.stream().peek(shortDto -> {
             shortDto.setViews(viewMap.getOrDefault("/events/" + shortDto.getId(), 0L));
@@ -72,7 +72,7 @@ public class AdminEventServiceImpl implements AdminEventService {
     @Transactional
     public EventFullDto updateBy(long eventId, UpdateEventAdminRequest updateEventUserRequest) {
         Event event = eventRepository.findById(eventId)
-            .orElseThrow(() -> new NotFoundException("Событие с с id = " + eventId + " не найдено"));
+                .orElseThrow(() -> new NotFoundException("Событие с с id = " + eventId + " не найдено"));
 
         if (event.getState().equals(EventState.PUBLISHED)) {
             throw new ConflictException("Событие" + event.getId() + "уже опубликовано");
@@ -89,31 +89,31 @@ public class AdminEventServiceImpl implements AdminEventService {
     Map<Long, Long> getConfirmedRequestsMap(List<Long> eventIds) {
         QParticipationRequest qRequest = QParticipationRequest.participationRequest;
         return jpaQueryFactory
-            .select(qRequest.event.id.as("eventId"), qRequest.count().as("confirmedRequests"))
-            .from(qRequest)
-            .where(qRequest.event.id.in(eventIds).and(qRequest.status.eq(RequestStatus.CONFIRMED)))
-            .groupBy(qRequest.event.id)
-            .fetch()
-            .stream()
-            .collect(Collectors.toMap(
-                tuple -> tuple.get(0, Long.class),
-                tuple -> Optional.ofNullable(tuple.get(1, Long.class)).orElse(0L))
-            );
+                .select(qRequest.event.id.as("eventId"), qRequest.count().as("confirmedRequests"))
+                .from(qRequest)
+                .where(qRequest.event.id.in(eventIds).and(qRequest.status.eq(RequestStatus.CONFIRMED)))
+                .groupBy(qRequest.event.id)
+                .fetch()
+                .stream()
+                .collect(Collectors.toMap(
+                        tuple -> tuple.get(0, Long.class),
+                        tuple -> Optional.ofNullable(tuple.get(1, Long.class)).orElse(0L))
+                );
     }
 
     List<EventFullDto> getEvents(Pageable pageRequest, BooleanBuilder eventQueryExpression) {
         return jpaQueryFactory
-            .selectFrom(QEvent.event)
-            .leftJoin(QEvent.event.category, QCategory.category)
-            .fetchJoin()
-            .leftJoin(QEvent.event.initiator, QUser.user)
-            .fetchJoin()
-            .where(eventQueryExpression)
-            .offset(pageRequest.getOffset())
-            .limit(pageRequest.getPageSize())
-            .stream()
-            .map(eventMapper::toEventFullDto)
-            .toList();
+                .selectFrom(QEvent.event)
+                .leftJoin(QEvent.event.category, QCategory.category)
+                .fetchJoin()
+                .leftJoin(QEvent.event.initiator, QUser.user)
+                .fetchJoin()
+                .where(eventQueryExpression)
+                .offset(pageRequest.getOffset())
+                .limit(pageRequest.getPageSize())
+                .stream()
+                .map(eventMapper::toEventFullDto)
+                .toList();
     }
 
     BooleanBuilder buildBooleanExpression(AdminEventParam eventParam) {
@@ -121,15 +121,15 @@ public class AdminEventServiceImpl implements AdminEventService {
 
         QEvent qEvent = QEvent.event;
         Optional.ofNullable(eventParam.getUsers())
-            .ifPresent(userIds -> eventQueryExpression.and(qEvent.initiator.id.in(userIds)));
+                .ifPresent(userIds -> eventQueryExpression.and(qEvent.initiator.id.in(userIds)));
         Optional.ofNullable(eventParam.getStates())
-            .ifPresent(userStates -> eventQueryExpression.and(qEvent.state.in(userStates)));
+                .ifPresent(userStates -> eventQueryExpression.and(qEvent.state.in(userStates)));
         Optional.ofNullable(eventParam.getCategories())
-            .ifPresent(categoryIds -> eventQueryExpression.and(qEvent.category.id.in(categoryIds)));
+                .ifPresent(categoryIds -> eventQueryExpression.and(qEvent.category.id.in(categoryIds)));
         Optional.ofNullable(eventParam.getRangeStart())
-            .ifPresent(rangeStart -> eventQueryExpression.and(qEvent.eventDate.after(rangeStart)));
+                .ifPresent(rangeStart -> eventQueryExpression.and(qEvent.eventDate.after(rangeStart)));
         Optional.ofNullable(eventParam.getRangeEnd())
-            .ifPresent(rangeEnd -> eventQueryExpression.and(qEvent.eventDate.before(rangeEnd)));
+                .ifPresent(rangeEnd -> eventQueryExpression.and(qEvent.eventDate.before(rangeEnd)));
         return eventQueryExpression;
     }
 }

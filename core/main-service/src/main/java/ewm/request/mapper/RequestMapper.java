@@ -10,7 +10,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
 @Mapper(componentModel = "spring", uses = {Event.class, UserMapper.class},
-    nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface RequestMapper {
     @Mapping(target = "requester", source = "participationRequest.requester.id")
     @Mapping(target = "event", source = "participationRequest.event.id")

@@ -41,8 +41,8 @@ public class CompilationServiceImpl implements CompilationService {
         }
 
         return compilationRepository.findAll(booleanBuilder, pageRequest)
-            .stream().map(compilationMapper::toCompilationDto)
-            .toList();
+                .stream().map(compilationMapper::toCompilationDto)
+                .toList();
     }
 
     @Override
@@ -64,7 +64,7 @@ public class CompilationServiceImpl implements CompilationService {
 
         List<Event> events = eventRepository.findAllByIdIn(compilationDto.getEvents());
         return compilationMapper.toCompilationDto(compilationRepository
-            .save(compilationMapper.toCompilation(compilationDto, events)));
+                .save(compilationMapper.toCompilation(compilationDto, events)));
     }
 
     @Override
@@ -77,10 +77,10 @@ public class CompilationServiceImpl implements CompilationService {
     @Transactional
     public CompilationDto updateBy(long id, UpdateCompilationRequest compilationDto) {
         Compilation compilation = compilationRepository.findById(id)
-            .orElseThrow(() -> new NotFoundException("Событие с id = " + id + " не найдено"));
+                .orElseThrow(() -> new NotFoundException("Событие с id = " + id + " не найдено"));
 
         List<Event> events = eventRepository.findAllByIdIn(compilationDto.getEvents());
         return compilationMapper.toCompilationDto(compilationRepository
-            .save(compilationMapper.toUpdateCompilation(compilation, compilationDto, events)));
+                .save(compilationMapper.toUpdateCompilation(compilation, compilationDto, events)));
     }
 }
