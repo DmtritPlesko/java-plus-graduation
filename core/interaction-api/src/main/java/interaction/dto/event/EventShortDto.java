@@ -2,13 +2,13 @@ package interaction.dto.event;
 
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import interaction.dto.category.CategoryDto;
+import interaction.dto.user.UserShortDto;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.FieldDefaults;
-import interaction.dto.category.CategoryDto;
-import interaction.dto.user.UserShortDto;
 
 import java.time.LocalDateTime;
 

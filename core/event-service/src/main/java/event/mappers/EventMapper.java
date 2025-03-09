@@ -7,6 +7,7 @@ import interaction.dto.event.UpdateEventUserRequest;
 import category.mapper.CategoryMapper;
 import category.model.Category;
 import event.model.Event;
+import interaction.dto.user.UserShortDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
@@ -24,6 +25,9 @@ public interface EventMapper {
     @Mapping(target = "confirmedRequests", ignore = true)
     EventFullDto toEventFullDto(Event event);
 
+    @Mapping(target = "confirmedRequests", ignore = true)
+    EventFullDto toEventFullDto(Event event,UserShortDto userShortDto);
+
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdOn", ignore = true)
     @Mapping(target = "initiator", ignore = true)
@@ -40,7 +44,9 @@ public interface EventMapper {
     @Mapping(target = "state", source = "updateEventAdminRequest.stateAction")
     Event toUpdatedEvent(@MappingTarget Event event, UpdateEventAdminRequest updateEventAdminRequest, Category category);
 
+    @Mapping(target = "id", source = "event.id")
     @Mapping(target = "views", ignore = true)
     @Mapping(target = "confirmedRequests", ignore = true)
-    EventShortDto toEventShortDto(Event event);
+    @Mapping(target = "initiator", source = "user")
+    EventShortDto toEventShortDto(Event event, UserShortDto user);
 }

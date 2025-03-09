@@ -3,7 +3,7 @@ package compilation.service.impl;
 import com.querydsl.core.BooleanBuilder;
 import compilation.mappers.CompilationMapper;
 import compilation.model.Compilation;
-import ewm.compilation.model.QCompilation;
+import compilation.model.QCompilation;//qwdwqdqwde
 import compilation.repository.CompilationRepository;
 import compilation.service.CompilationService;
 import lombok.AccessLevel;

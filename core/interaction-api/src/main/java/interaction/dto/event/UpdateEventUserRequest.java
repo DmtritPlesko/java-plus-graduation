@@ -1,11 +1,11 @@
 package interaction.dto.event;
 
+import interaction.validation.EventDateInTwoHours;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.FieldDefaults;
-import interaction.validation.EventDateInTwoHours;
 
 import java.time.LocalDateTime;
 

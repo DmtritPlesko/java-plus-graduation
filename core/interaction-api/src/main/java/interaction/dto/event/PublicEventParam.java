@@ -1,11 +1,11 @@
 package interaction.dto.event;
 
 
+import interaction.validation.StartAndEndValid;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
 import org.springframework.format.annotation.DateTimeFormat;
-import interaction.validation.StartAndEndValid;
 
 import java.time.LocalDateTime;
 import java.util.List;
