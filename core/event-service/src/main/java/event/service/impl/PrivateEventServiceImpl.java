@@ -4,19 +4,20 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import event.mappers.User;
 import event.mappers.UserMapper;
+import interaction.controller.FeignRequestController;
 import interaction.controller.FeignUserController;
 import interaction.dto.event.EventFullDto;
 import interaction.dto.event.NewEventDto;
 import interaction.dto.event.UpdateEventUserRequest;
 import category.mapper.CategoryMapper;
 import category.model.Category;
-import ewm.category.model.QCategory;
+import category.model.QCategory;//qdqwfqwfqwf
 import category.service.PublicCategoryService;
 import ewm.client.StatRestClientImpl;
 import ewm.dto.ViewStatsDto;
-import ewm.event.model.QEvent;
-import ewm.request.model.QParticipationRequest;
-import ewm.user.model.QUser;
+import event.model.QEvent;//qwfqwfqwfqwfqwf
+//import request.model.QParticipationRequest;//qwfqwfqwf
+//import user.model.QUser;//qfqwfqwfqwf
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -50,11 +51,12 @@ public class PrivateEventServiceImpl implements PrivateEventService {
     final JPAQueryFactory jpaQueryFactory;
     final UserMapper userMapper;
     final FeignUserController userController;
+    final FeignRequestController feignRequestController;
 
     @Override
     @Transactional(readOnly = true)
     public List<EventShortDto> getAllBy(long userId, Pageable pageRequest) {
-        BooleanExpression booleanExpression = QEvent.event.initiator.id.eq(userId);
+        BooleanExpression booleanExpression = QEvent.event.initiator.eq(userId);
         List<EventShortDto> events = getEvents(pageRequest, booleanExpression);
         List<Long> eventIds = events.stream().map(EventShortDto::getId).toList();
         Map<Long, Long> confirmedRequestsMap = getConfirmedRequestsMap(eventIds);
@@ -104,7 +106,7 @@ public class PrivateEventServiceImpl implements PrivateEventService {
     public EventFullDto updateBy(long userId, long eventId, UpdateEventUserRequest updateEventUserRequest) {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new NotFoundException("Событие с с id = " + eventId + " не найдено"));
-        if (event.getInitiator().getId() != userId) {
+        if (event.getInitiator() != userId) {
             throw new PermissionException("Доступ запрещен");
         }
         if (event.getState().equals(EventState.PUBLISHED)) {
@@ -115,33 +117,26 @@ public class PrivateEventServiceImpl implements PrivateEventService {
     }
 
     Map<Long, Long> getConfirmedRequestsMap(List<Long> eventIds) {
-        QParticipationRequest qRequest = QParticipationRequest.participationRequest;
-
-        return jpaQueryFactory
-                .select(qRequest.event.id.as("eventId"), qRequest.count().as("confirmedRequests"))
-                .from(qRequest)
-                .where(qRequest.event.id.in(eventIds).and(qRequest.status.eq(RequestStatus.CONFIRMED)))
-                .groupBy(qRequest.event.id)
-                .fetch()
-                .stream()
-                .collect(Collectors.toMap(
-                        tuple -> tuple.get(0, Long.class),
-                        tuple -> Optional.ofNullable(tuple.get(1, Long.class)).orElse(0L))
-                );
+       return feignRequestController.getConfirmedRequestMap(eventIds);
     }
 
     List<EventShortDto> getEvents(Pageable pageRequest, BooleanExpression eventQueryExpression) {
-        return jpaQueryFactory
+        List<Event> events = jpaQueryFactory
                 .selectFrom(QEvent.event)
                 .leftJoin(QEvent.event.category, QCategory.category)
-                .fetchJoin()
-                .leftJoin(QEvent.event.initiator, QUser.user)
                 .fetchJoin()
                 .where(eventQueryExpression)
                 .offset(pageRequest.getOffset())
                 .limit(pageRequest.getPageSize())
                 .stream()
-                .map(eventMapper::toEventShortDto)
+                .toList();
+
+        List<Long> listInitiatorIds = events.stream().map(Event::getInitiator).toList();
+
+        return events.stream()
+                .map(event -> eventMapper.toEventShortDto(event,
+                        userController.getAllBuIds(listInitiatorIds)
+                                .get(event.getInitiator())))
                 .toList();
     }
 }

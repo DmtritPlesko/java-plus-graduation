@@ -1,24 +1,16 @@
-server:
-  port: 0
-
-stat-server:
-  uri: http://stats-server:9090
-
 spring:
   application:
-    name: main-service
+    name: event-service
   config:
     import: "configserver:"
   cloud:
     config:
-      fail-fast: true
-      retry:
-        useRandomPolicy: true
-        max-interval: 6000
       discovery:
         enabled: true
         serviceId: config-server
-
+      fail-fast: true
+server:
+  port: 0
 eureka:
   client:
     serviceUrl:
@@ -26,5 +18,5 @@ eureka:
   instance:
     preferIpAddress: true
     hostname: localhost
-    instance-id: "${spring.application.name}:${random.value}"
+    instanceId: "${spring.application.name}:${server.port}"
     leaseRenewalIntervalInSeconds: 10

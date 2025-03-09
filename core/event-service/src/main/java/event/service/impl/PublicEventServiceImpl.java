@@ -1,13 +1,17 @@
 package event.service.impl;
 
+import category.model.QCategory;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import event.model.Event;
+import event.model.QEvent;
+import interaction.controller.FeignUserController;
 import interaction.dto.event.EventFullDto;
-import ewm.category.model.QCategory;
+//import ewm.category.model.QCategory;
 import ewm.client.StatRestClientImpl;
 import ewm.dto.ViewStatsDto;
-import ewm.request.model.QParticipationRequest;
-import ewm.user.model.QUser;
+//import ewm.request.model.QParticipationRequest;
+//import ewm.user.model.QUser;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -37,6 +41,7 @@ public class PublicEventServiceImpl implements PublicEventService {
     final EventMapper eventMapper;
     final JPAQueryFactory jpaQueryFactory;
     final FeignRequestController feignRequestController;
+    final FeignUserController feignUserController;
 
     @Override
     @Transactional(readOnly = true)
@@ -81,9 +86,20 @@ public class PublicEventServiceImpl implements PublicEventService {
         statRestClient.stats(start, now, List.of("/events/" + eventId), true)
                 .forEach(viewStatsDto -> event.setViews(viewStatsDto.getHits()));
 
-        long confirmedRequests = feignRequestController.countAllByEventIdAndStatusIs(eventId, RequestStatus.CONFIRMED);
+        long confirmedRequests = feignRequestController
+                .countAllByEventIdAndStatusIs(eventId, RequestStatus.CONFIRMED);
         event.setConfirmedRequests(confirmedRequests);
         return event;
+    }
+
+    @Override
+    public boolean exists(Long id) {
+        return eventRepository.existsByCategoryId(id);
+    }
+
+    @Override
+    public List<Event> findAllByIn(Set<Long> ids) {
+        return eventRepository.findAllByIdIn(ids);
     }
 
     Map<Long, Long> getConfirmedRequestsMap(List<Long> eventIds) {
@@ -91,17 +107,21 @@ public class PublicEventServiceImpl implements PublicEventService {
     }
 
     List<EventShortDto> getEvents(Pageable pageRequest, BooleanBuilder eventQueryExpression) {
-        return jpaQueryFactory
+        List<Event> events = jpaQueryFactory
                 .selectFrom(QEvent.event)
                 .leftJoin(QEvent.event.category, QCategory.category)
-                .fetchJoin()
-                .leftJoin(QEvent.event.initiator, QUser.user)
                 .fetchJoin()
                 .where(eventQueryExpression)
                 .offset(pageRequest.getOffset())
                 .limit(pageRequest.getPageSize())
                 .stream()
-                .map(eventMapper::toEventShortDto)
+                .toList();
+        List<Long> initiatorIds = events.stream().map(Event::getInitiator).toList();
+
+        return events.stream()
+                .map(event -> eventMapper.toEventShortDto(event,
+                        feignUserController.getAllBuIds(initiatorIds)
+                                .get(event.getInitiator())))
                 .toList();
     }
 

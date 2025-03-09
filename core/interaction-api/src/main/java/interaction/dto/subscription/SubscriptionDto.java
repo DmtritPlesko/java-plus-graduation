@@ -1,10 +1,10 @@
 package interaction.dto.subscription;
 
+import interaction.dto.user.UserShortDto;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
-import interaction.dto.user.UserShortDto;
 
 import java.time.LocalDateTime;
 

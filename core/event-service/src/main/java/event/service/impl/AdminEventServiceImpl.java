@@ -2,14 +2,17 @@ package event.service.impl;
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import event.model.QEvent;
 import interaction.controller.FeignRequestController;
+import interaction.controller.FeignUserController;
 import interaction.dto.event.EventFullDto;
 import interaction.dto.event.UpdateEventAdminRequest;
-import ewm.category.model.QCategory;
+import category.model.QCategory;//qwfqwfqwf
 import ewm.client.StatRestClient;
 import ewm.dto.ViewStatsDto;
-import ewm.request.model.QParticipationRequest;
-import ewm.user.model.QUser;
+//import request.model.QParticipationRequest;//qwfqwfqwfqwfqwf
+//import ewm.user.model.QUser;
+import interaction.dto.user.UserShortDto;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -38,6 +41,7 @@ public class AdminEventServiceImpl implements AdminEventService {
     final JPAQueryFactory jpaQueryFactory;
     final StatRestClient statRestClient;
     final FeignRequestController requestController;
+    final FeignUserController feignUserController;
 
     @Override
     @Transactional(readOnly = true)
@@ -89,17 +93,24 @@ public class AdminEventServiceImpl implements AdminEventService {
     }
 
     List<EventFullDto> getEvents(Pageable pageRequest, BooleanBuilder eventQueryExpression) {
-        return jpaQueryFactory
+        List<Event> events = jpaQueryFactory
                 .selectFrom(QEvent.event)
                 .leftJoin(QEvent.event.category, QCategory.category)
-                .fetchJoin()
-                .leftJoin(QEvent.event.initiator, QUser.user)
                 .fetchJoin()
                 .where(eventQueryExpression)
                 .offset(pageRequest.getOffset())
                 .limit(pageRequest.getPageSize())
                 .stream()
-                .map(eventMapper::toEventFullDto)
+                .toList();
+
+        List<Long> initiatorIds = events.stream()
+                .map(Event::getInitiator)
+                .toList();
+        Map<Long, UserShortDto> initiators = feignUserController.getAllBuIds(initiatorIds);
+
+
+        return events.stream()
+                .map(elem -> eventMapper.toEventFullDto(elem,initiators.get(elem.getInitiator())))
                 .toList();
     }
 
@@ -108,7 +119,7 @@ public class AdminEventServiceImpl implements AdminEventService {
 
         QEvent qEvent = QEvent.event;
         Optional.ofNullable(eventParam.getUsers())
-                .ifPresent(userIds -> eventQueryExpression.and(qEvent.initiator.id.in(userIds)));
+                .ifPresent(userIds -> eventQueryExpression.and(qEvent.initiator.in(userIds)));
         Optional.ofNullable(eventParam.getStates())
                 .ifPresent(userStates -> eventQueryExpression.and(qEvent.state.in(userStates)));
         Optional.ofNullable(eventParam.getCategories())

@@ -14,7 +14,6 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.data.annotation.Id;
 import interaction.dto.event.EventState;
-import interaction.dto.event.Location;
 
 import java.time.LocalDateTime;
 
@@ -44,7 +43,7 @@ public class Event {
     @Fetch(FetchMode.JOIN)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "initiator_id", nullable = false)
-    User initiator;
+    Long initiator;
     @Embedded
     Location location;
     @Column(name = "paid", nullable = false)

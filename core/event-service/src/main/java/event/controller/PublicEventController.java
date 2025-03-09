@@ -1,5 +1,6 @@
 package event.controller;
 
+import event.model.Event;
 import interaction.dto.event.EventFullDto;
 import ewm.client.StatRestClient;
 import ewm.dto.EndpointHitDto;
@@ -17,6 +18,7 @@ import event.service.PublicEventService;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequiredArgsConstructor
@@ -48,5 +50,15 @@ public class PublicEventController {
         LocalDateTime now = LocalDateTime.now();
         EndpointHitDto hitDto = new EndpointHitDto("main-server", uri, ip, now.format(dateTimeFormatter));
         statRestClient.addHit(hitDto);
+    }
+
+    @GetMapping(path = "/exist/{categoryId}")
+    boolean existEventByCategoryId(@PathVariable("categoryId") Long id) {
+        return publicEventService.exists(id);
+    }
+
+    @GetMapping(path = "/allin")
+    List<Event> findAllByIn(@RequestParam Set<Long> ids) {
+        return publicEventService.findAllByIn(ids);
     }
 }

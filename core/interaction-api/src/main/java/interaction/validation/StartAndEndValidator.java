@@ -1,9 +1,9 @@
 package interaction.validation;
 
 
+import interaction.dto.event.PublicEventParam;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-import interaction.dto.event.PublicEventParam;
 
 import java.time.LocalDateTime;
 import java.util.Objects;

@@ -13,9 +13,9 @@
     <modules>
         <module>event-service</module>
         <module>interaction-api</module>
-        <module>request</module>
+        <module>request-service</module>
         <module>user-service</module>
-        <module>subscription</module>
+        <module>subscription-service</module>
     </modules>
 
     <properties>

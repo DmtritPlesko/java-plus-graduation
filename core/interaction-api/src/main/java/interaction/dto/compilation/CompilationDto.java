@@ -1,11 +1,11 @@
 package interaction.dto.compilation;
 
+import interaction.dto.event.EventShortDto;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.FieldDefaults;
-import interaction.dto.event.EventShortDto;
 
 import java.util.Set;
 

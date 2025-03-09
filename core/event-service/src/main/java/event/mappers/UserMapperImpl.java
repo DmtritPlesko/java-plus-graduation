@@ -4,8 +4,7 @@ import org.springframework.stereotype.Component;
 import interaction.dto.user.NewUserRequest;
 import interaction.dto.user.UserDto;
 import interaction.dto.user.UserShortDto;
-import ru.practicum.user.mapper.UserMapper;
-import ru.practicum.user.model.User;
+
 
 @Component
 public class UserMapperImpl implements UserMapper {
