@@ -1,5 +1,7 @@
 package event.controller;
 
+import event.service.AdminEventService;
+import interaction.dto.event.AdminEventParam;
 import interaction.dto.event.EventFullDto;
 import interaction.dto.event.UpdateEventAdminRequest;
 import jakarta.validation.Valid;
@@ -10,8 +12,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import interaction.dto.event.AdminEventParam;
-import event.service.AdminEventService;
 
 import java.util.List;
 

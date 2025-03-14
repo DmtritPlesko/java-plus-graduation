@@ -4,16 +4,16 @@ import category.mapper.CategoryMapper;
 import category.model.Category;
 import category.repository.CategoryRepository;
 import category.service.AdminCategoryService;
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import interaction.controller.FeignEventController;
 import interaction.dto.category.CategoryDto;
 import interaction.dto.category.NewCategoryDto;
 import interaction.exception.ConflictException;
 import interaction.exception.NotFoundException;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor

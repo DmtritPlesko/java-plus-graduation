@@ -1,13 +1,13 @@
 package ru.practicum.subscription.mapper;
 
 import interaction.dto.subscription.SubscriptionDto;
-import ru.practicum.subscription.model.Subscription;
-import org.springframework.stereotype.Component;
 import interaction.dto.user.UserDto;
+import org.springframework.stereotype.Component;
+import ru.practicum.subscription.model.Subscription;
 
 
 @Component
-public class SubscriptionMapperImpl implements SubscriptionMapper{
+public class SubscriptionMapperImpl implements SubscriptionMapper {
     @Override
     public SubscriptionDto toSubscriptionDto(Subscription subscription) {
 

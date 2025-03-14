@@ -1,18 +1,14 @@
 package event.mappers;
 
-import interaction.dto.event.EventFullDto;
-import interaction.dto.event.NewEventDto;
-import interaction.dto.event.UpdateEventAdminRequest;
-import interaction.dto.event.UpdateEventUserRequest;
 import category.mapper.CategoryMapper;
 import category.model.Category;
 import event.model.Event;
+import interaction.dto.event.*;
 import interaction.dto.user.UserShortDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
-import interaction.dto.event.EventShortDto;
 
 @Mapper(componentModel = "spring", uses = {CategoryMapper.class, UserMapper.class, StateActionMapper.class},
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
@@ -26,7 +22,7 @@ public interface EventMapper {
     EventFullDto toEventFullDto(Event event);
 
     @Mapping(target = "confirmedRequests", ignore = true)
-    EventFullDto toEventFullDto(Event event,UserShortDto userShortDto);
+    EventFullDto toEventFullDto(Event event, UserShortDto userShortDto);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdOn", ignore = true)

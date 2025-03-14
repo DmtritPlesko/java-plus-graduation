@@ -3,9 +3,9 @@ package event.service;
 
 import event.model.Event;
 import interaction.dto.event.EventFullDto;
-import org.springframework.data.domain.Pageable;
 import interaction.dto.event.EventShortDto;
 import interaction.dto.event.PublicEventParam;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Set;

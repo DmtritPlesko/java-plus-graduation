@@ -1,11 +1,11 @@
 package ru.practicum.request.controller;
 
+import interaction.dto.request.ParticipationRequestDto;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import interaction.dto.request.*;
 import ru.practicum.request.service.PublicRequestService;
 
 import java.util.List;
@@ -28,7 +28,7 @@ public class PublicRequestController {
         return requestService.send(userId, eventId);
     }
 
-    @PatchMapping("{requestId}/cancel")
+    @PatchMapping("/{requestId}/cancel")
     ParticipationRequestDto cancel(@PathVariable long userId, @PathVariable long requestId) {
         return requestService.cancel(requestId, userId);
     }

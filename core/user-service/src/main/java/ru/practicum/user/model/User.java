@@ -20,9 +20,4 @@ public class User {
     @Column(name = "email", length = 254, unique = true, nullable = false)
     String email;
 
-    public User (Long id, String name) {
-        this.id = id;
-        this.name= name;
-    }
-
 }

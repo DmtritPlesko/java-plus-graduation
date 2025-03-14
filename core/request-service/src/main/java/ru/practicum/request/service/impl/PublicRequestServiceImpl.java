@@ -1,16 +1,16 @@
 package ru.practicum.request.service.impl;
 
+import interaction.controller.FeignEventController;
 import interaction.controller.FeignUserController;
+import interaction.dto.request.ParticipationRequestDto;
+import interaction.exception.ConflictException;
+import interaction.exception.PermissionException;
 import jakarta.ws.rs.NotFoundException;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import interaction.controller.FeignEventController;
-import interaction.dto.request.*;
-import interaction.exception.ConflictException;
-import interaction.exception.PermissionException;
 import ru.practicum.request.mappers.Event;
 import ru.practicum.request.mappers.RequestMapper;
 import ru.practicum.request.mappers.User;
@@ -19,7 +19,6 @@ import ru.practicum.request.model.ParticipationRequest;
 import ru.practicum.request.model.RequestStatus;
 import ru.practicum.request.repository.RequestRepository;
 import ru.practicum.request.service.PublicRequestService;
-
 
 import java.util.List;
 

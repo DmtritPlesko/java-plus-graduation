@@ -12,6 +12,6 @@ import org.springframework.context.annotation.ComponentScan;
 @ComponentScan(basePackages = {"org.springframework.boot.SpringApplication;"})
 public class EventApplication {
     public static void main(String[] args) {
-        SpringApplication.run(EventApplication.class,args);
+        SpringApplication.run(EventApplication.class, args);
     }
 }

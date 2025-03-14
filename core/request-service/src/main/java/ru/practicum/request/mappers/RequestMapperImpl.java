@@ -1,11 +1,11 @@
 package ru.practicum.request.mappers;
 
+import interaction.dto.request.ParticipationRequestDto;
 import org.springframework.stereotype.Component;
-import interaction.dto.request.*;
 import ru.practicum.request.model.ParticipationRequest;
 
 @Component
-public class RequestMapperImpl implements RequestMapper{
+public class RequestMapperImpl implements RequestMapper {
     @Override
     public ParticipationRequestDto toParticipantRequestDto(ParticipationRequest participationRequest) {
 

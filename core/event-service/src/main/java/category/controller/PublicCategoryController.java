@@ -1,12 +1,12 @@
 package category.controller;
 
 import category.service.PublicCategoryService;
+import interaction.dto.category.CategoryDto;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
-import interaction.dto.category.CategoryDto;
 
 import java.util.List;
 

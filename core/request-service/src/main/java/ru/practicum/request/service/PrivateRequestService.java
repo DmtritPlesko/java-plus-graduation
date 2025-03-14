@@ -1,6 +1,9 @@
 package ru.practicum.request.service;
 
-import interaction.dto.request.*;
+import interaction.dto.request.EventRequestStatusUpdateRequest;
+import interaction.dto.request.EventRequestStatusUpdateResult;
+import interaction.dto.request.ParticipationRequestDto;
+
 import java.util.List;
 
 public interface PrivateRequestService {

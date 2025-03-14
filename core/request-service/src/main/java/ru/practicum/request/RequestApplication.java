@@ -12,6 +12,6 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 @EnableFeignClients(basePackages = "interaction.controller")
 public class RequestApplication {
     public static void main(String[] args) {
-        SpringApplication.run(RequestApplication.class,args);
+        SpringApplication.run(RequestApplication.class, args);
     }
 }

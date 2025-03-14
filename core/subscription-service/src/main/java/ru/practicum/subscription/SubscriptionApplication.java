@@ -12,6 +12,6 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 @EnableFeignClients(basePackages = "interaction.controller")
 public class SubscriptionApplication {
     public static void main(String[] args) {
-        SpringApplication.run(SubscriptionApplication.class,args);
+        SpringApplication.run(SubscriptionApplication.class, args);
     }
 }

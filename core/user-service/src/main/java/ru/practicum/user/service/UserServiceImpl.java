@@ -1,6 +1,9 @@
 package ru.practicum.user.service;
 
 
+import interaction.dto.user.NewUserRequest;
+import interaction.dto.user.UserDto;
+import interaction.exception.NotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -8,12 +11,10 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import interaction.dto.user.NewUserRequest;
-import interaction.dto.user.UserDto;
-import interaction.exception.NotFoundException;
 import ru.practicum.user.mapper.UserMapper;
 import ru.practicum.user.model.User;
 import ru.practicum.user.repository.UserRepository;
+
 import java.util.List;
 
 @Service

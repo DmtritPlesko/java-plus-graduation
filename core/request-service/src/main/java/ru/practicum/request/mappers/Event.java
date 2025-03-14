@@ -1,10 +1,10 @@
 package ru.practicum.request.mappers;
 
+import interaction.dto.event.EventState;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
-import interaction.dto.event.EventState;
 
 import java.time.LocalDateTime;
 

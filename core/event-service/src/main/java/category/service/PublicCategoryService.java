@@ -1,7 +1,7 @@
 package category.service;
 
-import org.springframework.data.domain.Pageable;
 import interaction.dto.category.CategoryDto;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 

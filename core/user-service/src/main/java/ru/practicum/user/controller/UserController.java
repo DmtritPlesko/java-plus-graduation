@@ -1,5 +1,7 @@
 package ru.practicum.user.controller;
 
+import interaction.dto.user.NewUserRequest;
+import interaction.dto.user.UserDto;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -7,8 +9,6 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import interaction.dto.user.NewUserRequest;
-import interaction.dto.user.UserDto;
 import ru.practicum.user.service.UserService;
 
 import java.util.List;

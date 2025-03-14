@@ -1,11 +1,13 @@
 package ru.practicum.request.controller;
 
-import interaction.dto.request.*;
+import interaction.dto.request.EventRequestStatusUpdateRequest;
+import interaction.dto.request.EventRequestStatusUpdateResult;
+import interaction.dto.request.ParticipationRequestDto;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.request.service.*;
+import ru.practicum.request.service.PrivateRequestService;
 
 import java.util.List;
 

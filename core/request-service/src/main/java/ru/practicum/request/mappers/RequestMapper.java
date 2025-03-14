@@ -1,6 +1,6 @@
 package ru.practicum.request.mappers;
 
-import interaction.dto.request.*;
+import interaction.dto.request.ParticipationRequestDto;
 import ru.practicum.request.model.ParticipationRequest;
 
 public interface RequestMapper {

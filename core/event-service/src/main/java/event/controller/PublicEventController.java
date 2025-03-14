@@ -1,9 +1,12 @@
 package event.controller;
 
 import event.model.Event;
-import interaction.dto.event.EventFullDto;
+import event.service.PublicEventService;
 import ewm.client.StatRestClient;
 import ewm.dto.EndpointHitDto;
+import interaction.dto.event.EventFullDto;
+import interaction.dto.event.EventShortDto;
+import interaction.dto.event.PublicEventParam;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
@@ -11,9 +14,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
-import interaction.dto.event.EventShortDto;
-import interaction.dto.event.PublicEventParam;
-import event.service.PublicEventService;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;

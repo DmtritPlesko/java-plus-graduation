@@ -1,6 +1,8 @@
 package ru.practicum.request.mappers;
 
-import interaction.dto.user.*;
+import interaction.dto.user.NewUserRequest;
+import interaction.dto.user.UserDto;
+import interaction.dto.user.UserShortDto;
 import org.springframework.stereotype.Component;
 
 @Component

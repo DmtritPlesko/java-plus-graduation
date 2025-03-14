@@ -1,6 +1,8 @@
 package event.controller;
 
+import event.service.PrivateEventService;
 import interaction.dto.event.EventFullDto;
+import interaction.dto.event.EventShortDto;
 import interaction.dto.event.NewEventDto;
 import interaction.dto.event.UpdateEventUserRequest;
 import jakarta.validation.Valid;
@@ -10,8 +12,6 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import interaction.dto.event.EventShortDto;
-import event.service.PrivateEventService;
 
 import java.util.List;
 

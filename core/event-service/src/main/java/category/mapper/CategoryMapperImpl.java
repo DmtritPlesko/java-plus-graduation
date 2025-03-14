@@ -1,9 +1,9 @@
 package category.mapper;
 
-import org.springframework.stereotype.Component;
 import category.model.Category;
 import interaction.dto.category.CategoryDto;
 import interaction.dto.category.NewCategoryDto;
+import org.springframework.stereotype.Component;
 
 @Component
 public class CategoryMapperImpl implements CategoryMapper {
@@ -20,7 +20,7 @@ public class CategoryMapperImpl implements CategoryMapper {
     @Override
     public Category toCategory(CategoryDto categoryDto) {
 
-        Category category =  new Category();
+        Category category = new Category();
 
         category.setId(categoryDto.getId());
         category.setName(categoryDto.getName());

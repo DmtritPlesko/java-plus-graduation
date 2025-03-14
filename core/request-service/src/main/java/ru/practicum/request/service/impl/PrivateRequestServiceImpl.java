@@ -2,6 +2,9 @@ package ru.practicum.request.service.impl;
 
 import interaction.controller.FeignEventController;
 import interaction.controller.FeignUserController;
+import interaction.dto.request.EventRequestStatusUpdateRequest;
+import interaction.dto.request.EventRequestStatusUpdateResult;
+import interaction.dto.request.ParticipationRequestDto;
 import interaction.exception.ConflictException;
 import interaction.exception.NotFoundException;
 import lombok.AccessLevel;
@@ -9,13 +12,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import interaction.dto.request.*;
 import ru.practicum.request.mappers.Event;
 import ru.practicum.request.mappers.RequestMapper;
 import ru.practicum.request.model.ParticipationRequest;
 import ru.practicum.request.model.RequestStatus;
 import ru.practicum.request.repository.RequestRepository;
 import ru.practicum.request.service.PrivateRequestService;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,7 +48,7 @@ public class PrivateRequestServiceImpl implements PrivateRequestService {
         userController.getBy(userId);
         Event event = (Event) feignEventController.findById(eventId);
 
-        if(!event.getInitiator().getId().equals(userId)) {
+        if (!event.getInitiator().getId().equals(userId)) {
             throw new NotFoundException("Событие с Id = " + eventId + " не найден");
         }
 
@@ -73,9 +76,8 @@ public class PrivateRequestServiceImpl implements PrivateRequestService {
                     }
                 }
             }
-            case REJECTED ->
-                    requests.forEach(participationRequest
-                            -> participationRequest.setStatus(RequestStatus.REJECTED));
+            case REJECTED -> requests.forEach(participationRequest
+                    -> participationRequest.setStatus(RequestStatus.REJECTED));
         }
 
         EventRequestStatusUpdateResult result = new EventRequestStatusUpdateResult();

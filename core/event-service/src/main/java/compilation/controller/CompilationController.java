@@ -1,6 +1,9 @@
 package compilation.controller;
 
 import compilation.service.CompilationService;
+import interaction.dto.compilation.CompilationDto;
+import interaction.dto.compilation.NewCompilationDto;
+import interaction.dto.compilation.UpdateCompilationRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
@@ -10,9 +13,6 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import interaction.dto.compilation.CompilationDto;
-import interaction.dto.compilation.NewCompilationDto;
-import interaction.dto.compilation.UpdateCompilationRequest;
 
 import java.util.List;
 

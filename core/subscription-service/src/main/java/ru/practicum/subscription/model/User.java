@@ -1,6 +1,9 @@
 package ru.practicum.subscription.model;
 
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 
 @Getter
@@ -12,7 +15,7 @@ public class User {
     String name;
     String email;
 
-    public User (Long id, String name) {
+    public User(Long id, String name) {
         this.id = id;
         this.name = name;
     }

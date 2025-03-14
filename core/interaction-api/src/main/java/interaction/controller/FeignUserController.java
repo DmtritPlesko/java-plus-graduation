@@ -18,9 +18,9 @@ public interface FeignUserController {
 
     @GetMapping(path = "/admin/users")
     List<UserDto> getAllBy(@RequestParam(required = false) List<Long> ids,
-                            @RequestParam(defaultValue = "0") int from,
-                            @RequestParam(defaultValue = "10") int size);
+                           @RequestParam(defaultValue = "0") int from,
+                           @RequestParam(defaultValue = "10") int size);
 
     @GetMapping(path = "/users")
-    Map<Long,UserShortDto> getAllBuIds(@RequestParam List<Long> ids);
+    Map<Long, UserShortDto> getAllBuIds(@RequestParam List<Long> ids);
 }

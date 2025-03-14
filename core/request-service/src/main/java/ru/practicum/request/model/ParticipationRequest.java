@@ -6,8 +6,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.FieldDefaults;
-import ru.practicum.request.mappers.Event;
-import ru.practicum.request.mappers.User;
 
 import java.time.LocalDateTime;
 
@@ -23,7 +21,7 @@ public class ParticipationRequest {
     Long id;
     @Column(name = "created")
     LocalDateTime created;
-    @Column(name ="event_id")
+    @Column(name = "event_id")
     Long eventId;
     @Column(name = "requester_id")
     Long requesterId;

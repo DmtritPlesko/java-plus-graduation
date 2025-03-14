@@ -1,9 +1,9 @@
 package event.service;
 
+import interaction.dto.event.AdminEventParam;
 import interaction.dto.event.EventFullDto;
 import interaction.dto.event.UpdateEventAdminRequest;
 import org.springframework.data.domain.Pageable;
-import interaction.dto.event.AdminEventParam;
 
 import java.util.List;
 

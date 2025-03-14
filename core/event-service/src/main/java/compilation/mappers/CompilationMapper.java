@@ -1,11 +1,11 @@
 package compilation.mappers;
 
 import compilation.model.Compilation;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
 import interaction.dto.compilation.CompilationDto;
 import interaction.dto.compilation.NewCompilationDto;
 import interaction.dto.compilation.UpdateCompilationRequest;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 
 import java.util.List;
 import java.util.Objects;

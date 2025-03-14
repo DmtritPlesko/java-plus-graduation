@@ -23,7 +23,7 @@ public class RequestController {
     @GetMapping(path = "/count/{id}")
     long countAllByEventIdAndStatusIs(@PathVariable("eventId") long eventId,
                                       @RequestParam RequestStatus status) {
-        return requestService.countAllByEventIdAndStatusIs(eventId,status);
+        return requestService.countAllByEventIdAndStatusIs(eventId, status);
     }
 
 }

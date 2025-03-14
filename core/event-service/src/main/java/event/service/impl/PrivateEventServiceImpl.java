@@ -1,42 +1,38 @@
 package event.service.impl;
 
-import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.jpa.impl.JPAQueryFactory;
-import event.mappers.User;
-import event.mappers.UserMapper;
-import interaction.controller.FeignRequestController;
-import interaction.controller.FeignUserController;
-import interaction.dto.event.EventFullDto;
-import interaction.dto.event.NewEventDto;
-import interaction.dto.event.UpdateEventUserRequest;
 import category.mapper.CategoryMapper;
 import category.model.Category;
-import category.model.QCategory;//qdqwfqwfqwf
+import category.model.QCategory;
 import category.service.PublicCategoryService;
+import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import event.mappers.EventMapper;
+import event.mappers.User;
+import event.mappers.UserMapper;
+import event.model.Event;
+import event.model.QEvent;
+import event.repository.EventRepository;
+import event.service.PrivateEventService;
 import ewm.client.StatRestClientImpl;
 import ewm.dto.ViewStatsDto;
-import event.model.QEvent;//qwfqwfqwfqwfqwf
-//import request.model.QParticipationRequest;//qwfqwfqwf
-//import user.model.QUser;//qfqwfqwfqwf
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
-import event.mappers.EventMapper;
-import event.model.Event;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import event.repository.EventRepository;
-import interaction.dto.event.EventShortDto;
-import interaction.dto.event.EventState;
-import interaction.dto.request.RequestStatus;
+import interaction.controller.FeignRequestController;
+import interaction.controller.FeignUserController;
+import interaction.dto.event.*;
 import interaction.exception.ConflictException;
 import interaction.exception.NotFoundException;
 import interaction.exception.PermissionException;
-import event.service.PrivateEventService;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -117,7 +113,7 @@ public class PrivateEventServiceImpl implements PrivateEventService {
     }
 
     Map<Long, Long> getConfirmedRequestsMap(List<Long> eventIds) {
-       return feignRequestController.getConfirmedRequestMap(eventIds);
+        return feignRequestController.getConfirmedRequestMap(eventIds);
     }
 
     List<EventShortDto> getEvents(Pageable pageRequest, BooleanExpression eventQueryExpression) {

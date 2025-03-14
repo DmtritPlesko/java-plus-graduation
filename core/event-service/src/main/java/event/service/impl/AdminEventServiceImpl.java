@@ -1,32 +1,30 @@
 package event.service.impl;
 
+import category.model.QCategory;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import event.mappers.EventMapper;
+import event.model.Event;
 import event.model.QEvent;
-import interaction.controller.FeignRequestController;
-import interaction.controller.FeignUserController;
-import interaction.dto.event.EventFullDto;
-import interaction.dto.event.UpdateEventAdminRequest;
-import category.model.QCategory;//qwfqwfqwf
+import event.repository.EventRepository;
+import event.service.AdminEventService;
 import ewm.client.StatRestClient;
 import ewm.dto.ViewStatsDto;
-//import request.model.QParticipationRequest;//qwfqwfqwfqwfqwf
-//import ewm.user.model.QUser;
+import interaction.controller.FeignRequestController;
+import interaction.controller.FeignUserController;
+import interaction.dto.event.AdminEventParam;
+import interaction.dto.event.EventFullDto;
+import interaction.dto.event.EventState;
+import interaction.dto.event.UpdateEventAdminRequest;
 import interaction.dto.user.UserShortDto;
+import interaction.exception.ConflictException;
+import interaction.exception.NotFoundException;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import event.mappers.EventMapper;
-import event.model.Event;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import event.repository.EventRepository;
-import interaction.dto.event.AdminEventParam;
-import interaction.dto.event.EventState;
-import interaction.exception.ConflictException;
-import interaction.exception.NotFoundException;
-import event.service.AdminEventService;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -110,7 +108,7 @@ public class AdminEventServiceImpl implements AdminEventService {
 
 
         return events.stream()
-                .map(elem -> eventMapper.toEventFullDto(elem,initiators.get(elem.getInitiator())))
+                .map(elem -> eventMapper.toEventFullDto(elem, initiators.get(elem.getInitiator())))
                 .toList();
     }
 

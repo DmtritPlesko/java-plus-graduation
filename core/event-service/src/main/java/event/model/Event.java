@@ -1,7 +1,7 @@
 package event.model;
 
 import category.model.Category;
-import event.mappers.User;
+import interaction.dto.event.EventState;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -13,7 +13,6 @@ import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.data.annotation.Id;
-import interaction.dto.event.EventState;
 
 import java.time.LocalDateTime;
 

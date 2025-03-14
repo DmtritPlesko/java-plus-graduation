@@ -15,15 +15,15 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class RequestServiceImpl  implements RequestService {
+public class RequestServiceImpl implements RequestService {
 
     final RequestRepository repository;
+    final JPAQueryFactory jpaQueryFactory;
 
     @Override
     public Map<Long, Long> getConfirmedRequestsMap(List<Long> eventIds) {
         QParticipationRequest qRequest = QParticipationRequest.participationRequest;
 
-        final JPAQueryFactory jpaQueryFactory = null;
 
         return jpaQueryFactory
                 .select(qRequest.id.as("eventId"), qRequest.count().as("confirmedRequests"))
@@ -40,7 +40,7 @@ public class RequestServiceImpl  implements RequestService {
 
     @Override
     public long countAllByEventIdAndStatusIs(Long id, RequestStatus status) {
-        return repository.countAllByEventIdAndStatusIs(id,status);
+        return repository.countAllByEventIdAndStatusIs(id, status);
     }
 
 
