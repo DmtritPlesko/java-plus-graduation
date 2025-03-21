@@ -1,5 +1,6 @@
 package ru.practicum.request.mappers;
 
+import interaction.dto.event.EventFullDto;
 import interaction.dto.request.ParticipationRequestDto;
 import org.springframework.stereotype.Component;
 import ru.practicum.request.model.ParticipationRequest;
@@ -27,6 +28,16 @@ public class RequestMapperImpl implements RequestMapper {
 
         participationRequest.setRequesterId(requester.getId());
         participationRequest.setEventId(event.getId());
+
+        return participationRequest;
+    }
+
+    @Override
+    public ParticipationRequest toParticipationRequest(EventFullDto eventFullDto, User user) {
+        ParticipationRequest participationRequest = new ParticipationRequest();
+
+        participationRequest.setRequesterId(user.getId());
+        participationRequest.setEventId(eventFullDto.getId());
 
         return participationRequest;
     }

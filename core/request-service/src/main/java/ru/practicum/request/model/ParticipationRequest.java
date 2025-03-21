@@ -13,8 +13,8 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @ToString
-@FieldDefaults(level = AccessLevel.PRIVATE)
 @Table(name = "requests")
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class ParticipationRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

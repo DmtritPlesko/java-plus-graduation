@@ -2,6 +2,7 @@ package ru.practicum.request.service.impl;
 
 import interaction.controller.FeignEventController;
 import interaction.controller.FeignUserController;
+import interaction.dto.event.EventFullDto;
 import interaction.dto.request.EventRequestStatusUpdateRequest;
 import interaction.dto.request.EventRequestStatusUpdateResult;
 import interaction.dto.request.ParticipationRequestDto;
@@ -12,7 +13,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.request.mappers.Event;
 import ru.practicum.request.mappers.RequestMapper;
 import ru.practicum.request.model.ParticipationRequest;
 import ru.practicum.request.model.RequestStatus;
@@ -46,7 +46,7 @@ public class PrivateRequestServiceImpl implements PrivateRequestService {
     @Transactional
     public EventRequestStatusUpdateResult update(long userId, long eventId, EventRequestStatusUpdateRequest updateRequest) {
         userController.getBy(userId);
-        Event event = (Event) feignEventController.findById(eventId);
+        EventFullDto event = feignEventController.findById(eventId);
 
         if (!event.getInitiator().getId().equals(userId)) {
             throw new NotFoundException("Событие с Id = " + eventId + " не найден");

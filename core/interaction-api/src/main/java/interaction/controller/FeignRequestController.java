@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.List;
 import java.util.Map;
 
-@FeignClient(name = "request")
+@FeignClient(name = "request-service")
 public interface FeignRequestController {
     @GetMapping(path = "/requests/count/{eventID}")
     long countAllByEventIdAndStatusIs(@PathVariable("eventId") long eventId,
