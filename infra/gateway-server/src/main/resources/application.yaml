@@ -23,5 +23,5 @@ eureka:
   instance:
     preferIpAddress: true
     hostname: localhost
-    instance-id: "${spring.application.name}:${random.value}"
+    instanceId: "${spring.application.name}:${server.port}"
     leaseRenewalIntervalInSeconds: 10
