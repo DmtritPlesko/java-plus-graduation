@@ -5,15 +5,12 @@ spring:
       ddl-auto: none
     properties:
       hibernate:
-        format_sql: true
-  sql:
-    init:
-      mode: always
-  output:
-    ansi:
-      enabled: ALWAYS
+        jdbc:
+          time_zone: UTC
   datasource:
-    driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://subscription-db:5432/ewm-subscription
     username: root
     password: root
+  sql:
+    init:
+      mode: always

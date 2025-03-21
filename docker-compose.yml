@@ -198,6 +198,7 @@ services:
       timeout: 5s
       interval: 25s
       retries: 10
+
   subscription-db:
     image: postgres:16.1
     container_name: postgres-ewm-subscription-db
@@ -209,12 +210,27 @@ services:
       - POSTGRES_DB=ewm-subscription
     healthcheck:
       test: pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
+      timeout: 10s
+      interval: 30s
+      retries: 20
+
+
+  #REQUEST-SERVICE
+  request-db:
+    image: postgres:16.1
+    container_name: postgres-ewm-request-db
+    networks:
+      - ewm-net
+    environment:
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_USER=root
+      - POSTGRES_DB=ewm-request
+    healthcheck:
+      test: pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
       timeout: 5s
       interval: 10s
       retries: 15
 
-
-  #REQUEST-SERVICE
   request-service:
     build: core/request-service
     container_name: request-service
@@ -244,21 +260,6 @@ services:
       timeout: 5s
       interval: 25s
       retries: 10
-  request-db:
-    image: postgres:16.1
-    container_name: postgres-ewm-request-db
-    networks:
-      - ewm-net
-    environment:
-      - POSTGRES_PASSWORD=root
-      - POSTGRES_USER=root
-      - POSTGRES_DB=ewm-request
-    healthcheck:
-      test: pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
-      timeout: 5s
-      interval: 10s
-      retries: 15
 
 networks:
   ewm-net:
-    driver: bridge
