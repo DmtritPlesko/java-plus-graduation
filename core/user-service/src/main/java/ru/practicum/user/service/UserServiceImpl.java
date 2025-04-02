@@ -1,6 +1,7 @@
 package ru.practicum.user.service;
 
 
+import com.querydsl.core.BooleanBuilder;
 import interaction.dto.user.NewUserRequest;
 import interaction.dto.user.UserDto;
 import interaction.exception.NotFoundException;
@@ -12,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.practicum.user.mapper.UserMapper;
+import ru.practicum.user.model.QUser;
 import ru.practicum.user.model.User;
 import ru.practicum.user.repository.UserRepository;
 
@@ -34,8 +36,13 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public List<UserDto> findAllBy(List<Long> ids, Pageable pageRequest) {
+        BooleanBuilder booleanBuilder = new BooleanBuilder();
 
-        Page<User> usersPage = userRepository.findByIds(ids, pageRequest);
+        if (ids != null && !ids.isEmpty()) {
+            booleanBuilder.and(QUser.user.id.in(ids));
+        }
+
+        Page<User> usersPage = userRepository.findAll(booleanBuilder, pageRequest);
         return usersPage.map(userMapper::toUserDto).toList();
     }
 

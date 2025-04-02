@@ -5,6 +5,7 @@ import interaction.controller.FeignUserController;
 import interaction.dto.event.EventFullDto;
 import interaction.dto.event.EventState;
 import interaction.dto.request.ParticipationRequestDto;
+import interaction.dto.user.UserDto;
 import interaction.exception.ConflictException;
 import interaction.exception.PermissionException;
 import jakarta.ws.rs.NotFoundException;
@@ -23,6 +24,7 @@ import ru.practicum.request.service.PublicRequestService;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -44,13 +46,21 @@ public class PublicRequestServiceImpl implements PublicRequestService {
     @Override
     public ParticipationRequestDto send(long userId, long eventId) {
 
-        if (requestRepository.existsByEventIdAndRequesterId(userId, eventId)) {
+        if (requestRepository.existsByEventIdAndRequesterId(eventId, userId)) {
             throw new ConflictException("Нельзя повторно подать заявку");
         }
 
-        User requester = userMapper.toUser(feignUserController.getBy(userId));
+        Optional<UserDto> userDto = Optional.ofNullable(feignUserController.getBy(userId));
+        if (userDto.isEmpty()) {
+            throw new NotFoundException("Пользователь с id = " + userId + " не найден");
+        }
+        User requester = userMapper.toUser(userDto.get());
 
-        EventFullDto event = feignEventController.findById(eventId);
+        Optional<EventFullDto> eventFullDto = Optional.ofNullable(feignEventController.findById(eventId));
+        if (eventFullDto.isEmpty()) {
+            throw new NotFoundException("Событие с id = " + eventId + " не найдено");
+        }
+        EventFullDto event = eventFullDto.get();
 
         if (requester.getId().equals(event.getInitiator().getId())) {
             throw new ConflictException("Нельзя делать запрос на свое событие");
@@ -61,7 +71,8 @@ public class PublicRequestServiceImpl implements PublicRequestService {
 
         boolean limit =
                 event.getParticipantLimit() ==
-                        requestRepository.countAllByEventIdAndStatusIs(eventId, RequestStatus.CONFIRMED);
+                        requestRepository.countAllByEventIdAndStatusIs(eventId, RequestStatus.CONFIRMED)
+                        && event.getParticipantLimit() != 0;
 
         if (limit) {
             throw new ConflictException("Нет свободных мест на мероприятие");
@@ -70,7 +81,11 @@ public class PublicRequestServiceImpl implements PublicRequestService {
         ParticipationRequest request = requestMapper.toParticipationRequest(event, requester);
         request.setCreated(LocalDateTime.now());
 
-        return requestMapper.toParticipantRequestDto(request);
+        if (!event.isRequestModeration() || event.getParticipantLimit() == 0) {
+            request.setStatus(RequestStatus.CONFIRMED);
+        }
+
+        return requestMapper.toParticipantRequestDto(requestRepository.save(request));
     }
 
     @Override

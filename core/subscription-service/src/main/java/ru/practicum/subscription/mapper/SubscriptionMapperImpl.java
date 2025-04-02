@@ -1,7 +1,7 @@
 package ru.practicum.subscription.mapper;
 
 import interaction.dto.subscription.SubscriptionDto;
-import interaction.dto.user.UserDto;
+import interaction.dto.user.UserShortDto;
 import org.springframework.stereotype.Component;
 import ru.practicum.subscription.model.Subscription;
 
@@ -12,23 +12,19 @@ public class SubscriptionMapperImpl implements SubscriptionMapper {
     public SubscriptionDto toSubscriptionDto(Subscription subscription) {
 
         SubscriptionDto subscriptionDto = new SubscriptionDto();
-
         subscriptionDto.setId(subscription.getId());
-
-        subscriptionDto.getFollower().setId(subscription.getFollowerId());
-
-        subscriptionDto.getFollowing().setId(subscription.getFollowingId());
-
+        subscriptionDto.setFollower(new UserShortDto(subscription.getFollowerId()));
+        subscriptionDto.setFollowing(new UserShortDto(subscription.getFollowingId()));
         subscriptionDto.setCreated(subscription.getCreated());
 
         return subscriptionDto;
     }
 
     @Override
-    public Subscription toSubscription(Subscription subscription, UserDto follower, UserDto following) {
+    public Subscription toSubscription(Subscription subscription, Long follower, Long following) {
 
-        subscription.setFollowerId(follower.getId());
-        subscription.setFollowingId(following.getId());
+        subscription.setFollowerId(follower);
+        subscription.setFollowingId(following);
 
         return subscription;
 

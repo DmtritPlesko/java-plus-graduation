@@ -11,8 +11,8 @@ import ru.practicum.subscription.model.User;
 public class UserMapperImpl implements UserMapper {
     @Override
     public User toUser(NewUserRequest newUserRequest) {
-        User user = new User();
 
+        User user = new User();
         user.setEmail(newUserRequest.getEmail());
         user.setName(newUserRequest.getName());
 
@@ -21,8 +21,8 @@ public class UserMapperImpl implements UserMapper {
 
     @Override
     public User toUser(UserDto userDto) {
-        User user = new User();
 
+        User user = new User();
         user.setId(userDto.getId());
         user.setEmail(userDto.getEmail());
         user.setName(userDto.getName());
@@ -32,8 +32,8 @@ public class UserMapperImpl implements UserMapper {
 
     @Override
     public UserDto toUserDto(User user) {
-        UserDto userDto = new UserDto();
 
+        UserDto userDto = new UserDto();
         userDto.setId(userDto.getId());
         userDto.setEmail(user.getEmail());
         userDto.setName(user.getName());
@@ -43,8 +43,8 @@ public class UserMapperImpl implements UserMapper {
 
     @Override
     public UserShortDto toUserShortDto(User user) {
-        UserShortDto userShortDto = new UserShortDto();
 
+        UserShortDto userShortDto = new UserShortDto();
         userShortDto.setId(userShortDto.getId());
         userShortDto.setName(user.getName());
 
@@ -55,7 +55,6 @@ public class UserMapperImpl implements UserMapper {
     public UserShortDto userDtoToUserShortDto(UserDto userDto) {
 
         UserShortDto userShortDto = new UserShortDto();
-
         userShortDto.setId(userDto.getId());
         userShortDto.setName(userDto.getName());
 

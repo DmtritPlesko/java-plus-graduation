@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Collections;
 import java.util.List;
 
 @Slf4j
@@ -26,6 +27,10 @@ public class StatRestClientImpl implements StatRestClient {
     }
 
     public List<ViewStatsDto> stats(LocalDateTime start, LocalDateTime end, List<String> uris, Boolean unique) {
-        return statClient.stats(start.format(formatter), end.format(formatter), uris, unique);
+        try {
+            return statClient.stats(start.format(formatter), end.format(formatter), uris, unique);
+        } catch (Exception e) {
+            return Collections.emptyList();
+        }
     }
 }

@@ -7,6 +7,7 @@ import ewm.dto.ViewStatsDto;
 import interaction.controller.FeignRequestController;
 import interaction.controller.FeignUserController;
 import interaction.dto.event.*;
+import interaction.dto.user.UserDto;
 import interaction.exception.ConflictException;
 import interaction.exception.NotFoundException;
 import interaction.exception.PermissionException;
@@ -52,6 +53,7 @@ public class PrivateEventServiceImpl implements PrivateEventService {
     @Override
     @Transactional(readOnly = true)
     public List<EventShortDto> getAllBy(long userId, Pageable pageRequest) {
+
         BooleanExpression booleanExpression = QEvent.event.initiatorId.eq(userId);
         List<EventShortDto> events = getEvents(pageRequest, booleanExpression);
         List<Long> eventIds = events.stream().map(EventShortDto::getId).toList();
@@ -60,14 +62,14 @@ public class PrivateEventServiceImpl implements PrivateEventService {
         Set<String> uris = events.stream()
                 .map(event -> "/events/" + event.getId()).collect(Collectors.toSet());
 
-        LocalDateTime start = events
+        LocalDateTime end = events
                 .stream()
                 .min(Comparator.comparing(EventShortDto::getEventDate))
                 .orElseThrow(() -> new NotFoundException("Даты не заданы"))
                 .getEventDate();
 
         Map<String, Long> viewMap = statRestClient
-                .stats(start, LocalDateTime.now(), uris.stream().toList(), false).stream()
+                .stats(LocalDateTime.now(), end, uris.stream().toList(), false).stream()
                 .collect(Collectors.groupingBy(ViewStatsDto::getUri, Collectors.summingLong(ViewStatsDto::getHits)));
 
         return events.stream().peek(shortDto -> {
@@ -79,11 +81,13 @@ public class PrivateEventServiceImpl implements PrivateEventService {
     @Override
     @Transactional
     public EventFullDto create(long userId, NewEventDto newEventDto) {
-        User initiator = userMapper.toUser(userController.getBy(userId));
+        User initiator = userMapper.toUser(userController.getAllBy(List.of(userId), 0, 10).getFirst());
         Category category = categoryMapper.toCategory(categoryService.getBy(newEventDto.getCategory()));
         Event event = eventMapper.toEvent(newEventDto, initiator, category);
         eventRepository.save(event);
-        return eventMapper.toEventFullDto(event);
+        EventFullDto eventFullDto = eventMapper.toEventFullDto(event);
+        eventFullDto.setInitiator(userMapper.toUserShortDto(initiator));
+        return eventFullDto;
     }
 
     @Override
@@ -91,6 +95,8 @@ public class PrivateEventServiceImpl implements PrivateEventService {
     public EventFullDto getBy(long userId, long eventId) {
         EventFullDto eventFullDto = eventRepository.findById(eventId).map(eventMapper::toEventFullDto)
                 .orElseThrow(() -> new NotFoundException("Событие не найдено"));
+        UserDto userDto = userController.getBy(userId);
+        eventFullDto.setInitiator(userMapper.toUserShortDto(userDto));
         if (eventFullDto.getInitiator().getId() != userId) {
             throw new PermissionException("Доступ запрещен");
         }
@@ -106,7 +112,7 @@ public class PrivateEventServiceImpl implements PrivateEventService {
             throw new PermissionException("Доступ запрещен");
         }
         if (event.getState().equals(EventState.PUBLISHED)) {
-            throw new ConflictException("Нельзя отменить событие с состоянием");
+            throw new ConflictException("Нельзя отменить опубликованное событие");
         }
         Category category = categoryMapper.toCategory(categoryService.getBy(event.getCategory().getId()));
         return eventMapper.toEventFullDto(eventMapper.toUpdatedEvent(event, updateEventUserRequest, category));

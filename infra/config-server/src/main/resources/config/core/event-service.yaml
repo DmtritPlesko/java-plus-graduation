@@ -17,3 +17,6 @@ spring:
     url: jdbc:postgresql://event-db:5432/ewm-event
     username: root
     password: root
+
+  stat-server:
+    uri: http://stats-server:9090

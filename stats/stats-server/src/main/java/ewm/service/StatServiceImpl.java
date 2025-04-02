@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
@@ -42,13 +43,7 @@ public class StatServiceImpl implements StatService {
             params.setUnique(false);
         }
 
-        if (params.getStart() == null) {
-            throw new ValidationException("Время начала не представлено");
-        } else if (params.getEnd() == null) {
-            throw new ValidationException("Время конца не указано");
-        }
-
-        if (params.getStart().isAfter(params.getEnd())) {
+        if (params.getStart().isAfter(LocalDateTime.now())) {
             throw new ValidationException("Время начала не может быть в прошлом");
         }
 
@@ -72,6 +67,5 @@ public class StatServiceImpl implements StatService {
 
         log.info("Данные статистики {} успешно считаны из БД", statsToReturn);
         return statsToReturn;
-
     }
 }

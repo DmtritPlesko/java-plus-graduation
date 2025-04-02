@@ -17,3 +17,6 @@ spring:
     url: jdbc:postgresql://user-db:5432/ewm-user
     username: root
     password: root
+
+  stat-server:
+    uri: http://stats-server:9090

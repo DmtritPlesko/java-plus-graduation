@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import services.event.service.EventService;
 
@@ -18,15 +19,15 @@ public class EventController implements FeignEventController {
 
     final EventService service;
 
-    @GetMapping(path = "/exist/{categoryId}")
+    @GetMapping(path = "/exist")
     @Override
-    public boolean existEventByCategoryId(Long id) {
-        return service.existEventByCategoryId(id);
+    public boolean existEventByCategoryId(@RequestParam("categoryId") Long categoryId) {
+        return service.existEventByCategoryId(categoryId);
     }
 
-    @GetMapping("/{eventId}")
+    @GetMapping
     @Override
-    public EventFullDto findById(Long id) {
-        return service.findById(id);
+    public EventFullDto findById(@RequestParam("eventId") Long eventId) {
+        return service.findById(eventId);
     }
 }

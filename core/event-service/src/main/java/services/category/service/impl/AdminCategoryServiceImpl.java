@@ -48,10 +48,6 @@ public class AdminCategoryServiceImpl implements AdminCategoryService {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Категория не найдена"));
 
-        if (categoryRepository.existsByName(categoryDto.getName())) {
-            throw new ConflictException("Название категории должно быть уникальным");
-        }
-
         category.setName(categoryDto.getName());
 
         return categoryMapper.toCategoryDto(categoryRepository.save(category));

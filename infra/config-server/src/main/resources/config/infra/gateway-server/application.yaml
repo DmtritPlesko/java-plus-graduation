@@ -29,6 +29,13 @@ spring:
           predicates:
             - Path=/admin/events/**, /users/{userId}/events, /users/{userId}/events/{eventId}, /events/**
 
+        - id: event_service_route_add_param
+          uri: lb://event-service
+          predicates:
+            - Path=/users/{userId}/events
+            - Query=from
+            - Query=size
+
         #request
         - id: request_service_route
           uri: lb://request-service

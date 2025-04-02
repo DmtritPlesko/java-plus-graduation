@@ -15,8 +15,8 @@ public class RequestMapperImpl implements RequestMapper {
         participationRequestDto.setRequester(participationRequest.getRequesterId());
         participationRequestDto.setId(participationRequest.getId());
         participationRequestDto.setCreated(participationRequest.getCreated());
-        participationRequestDto.setStatus(participationRequestDto.getStatus());
-        participationRequestDto.setEvent(participationRequestDto.getEvent());
+        participationRequestDto.setStatus(participationRequest.getStatus().name());
+        participationRequestDto.setEvent(participationRequest.getEventId());
 
         return participationRequestDto;
     }

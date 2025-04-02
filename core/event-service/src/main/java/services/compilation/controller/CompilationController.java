@@ -39,7 +39,7 @@ public class CompilationController {
 
     @PostMapping("/admin/compilations")
     @ResponseStatus(HttpStatus.CREATED)
-    public CompilationDto add(@RequestBody NewCompilationDto compilationDto) {
+    public CompilationDto add(@Valid @RequestBody NewCompilationDto compilationDto) {
         return compilationService.add(compilationDto);
     }
 

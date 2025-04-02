@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import services.category.model.QCategory;
 import services.event.mappers.EventMapper;
+import services.event.mappers.UserMapper;
 import services.event.model.Event;
 import services.event.model.QEvent;
 import services.event.repository.EventRepository;
@@ -40,6 +41,7 @@ public class AdminEventServiceImpl implements AdminEventService {
     final StatRestClient statRestClient;
     final FeignRequestController requestController;
     final FeignUserController feignUserController;
+    final UserMapper userMapper;
 
     @Override
     @Transactional(readOnly = true)
@@ -50,21 +52,29 @@ public class AdminEventServiceImpl implements AdminEventService {
         List<Long> eventIds = events.stream().map(EventFullDto::getId).toList();
         Map<Long, Long> confirmedRequestsMap = getConfirmedRequestsMap(eventIds);
 
+        UserShortDto userShortDto = feignUserController
+                .getAllBy(eventParam.getUsers(), 0, 10)
+                .stream()
+                .map(userMapper::toUserShortDto)
+                .findFirst()
+                .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
+
         Set<String> uris = events.stream()
                 .map(event -> "/events/" + event.getId()).collect(Collectors.toSet());
 
-        LocalDateTime start = events
+        LocalDateTime end = events
                 .stream()
                 .min(Comparator.comparing(EventFullDto::getEventDate))
                 .orElseThrow(() -> new NotFoundException("Даты не заданы"))
                 .getEventDate();
 
         Map<String, Long> viewMap = statRestClient
-                .stats(start, LocalDateTime.now(), uris.stream().toList(), false).stream()
+                .stats(LocalDateTime.now(), end, uris.stream().toList(), false).stream()
                 .collect(Collectors.groupingBy(ViewStatsDto::getUri, Collectors.summingLong(ViewStatsDto::getHits)));
 
         return events.stream().peek(shortDto -> {
             shortDto.setViews(viewMap.getOrDefault("/events/" + shortDto.getId(), 0L));
+            shortDto.setInitiator(userShortDto);
             shortDto.setConfirmedRequests(confirmedRequestsMap.getOrDefault(shortDto.getId(), 0L));
         }).toList();
     }
@@ -81,7 +91,6 @@ public class AdminEventServiceImpl implements AdminEventService {
         if (event.getState().equals(EventState.CANCELED)) {
             throw new ConflictException("Нельзя опубликовать отмененное событие");
         }
-
         eventRepository.save(eventMapper.toUpdatedEvent(event, updateEventUserRequest, event.getCategory()));
         return eventMapper.toEventFullDto(event);
     }
@@ -90,7 +99,7 @@ public class AdminEventServiceImpl implements AdminEventService {
         return requestController.getConfirmedRequestMap(eventIds);
     }
 
-    List<EventFullDto> getEvents(Pageable pageRequest, BooleanBuilder eventQueryExpression) {
+    private List<EventFullDto> getEvents(Pageable pageRequest, BooleanBuilder eventQueryExpression) {
         List<Event> events = jpaQueryFactory
                 .selectFrom(QEvent.event)
                 .leftJoin(QEvent.event.category, QCategory.category)
@@ -100,15 +109,11 @@ public class AdminEventServiceImpl implements AdminEventService {
                 .limit(pageRequest.getPageSize())
                 .stream()
                 .toList();
-
-        List<Long> initiatorIds = events.stream()
-                .map(Event::getInitiatorId)
-                .toList();
+        List<Long> initiatorIds = events.stream().map(Event::getInitiatorId).toList();
         Map<Long, UserShortDto> initiators = feignUserController.getAllBuIds(initiatorIds);
 
-
         return events.stream()
-                .map(elem -> eventMapper.toEventFullDto(elem, initiators.get(elem.getInitiatorId())))
+                .map(event -> eventMapper.toEventFullDto(event, initiators.get(event.getInitiatorId())))
                 .toList();
     }
 

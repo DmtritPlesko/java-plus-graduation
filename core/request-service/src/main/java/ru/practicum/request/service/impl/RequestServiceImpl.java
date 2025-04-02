@@ -23,13 +23,11 @@ public class RequestServiceImpl implements RequestService {
     @Override
     public Map<Long, Long> getConfirmedRequestsMap(List<Long> eventIds) {
         QParticipationRequest qRequest = QParticipationRequest.participationRequest;
-
-
         return jpaQueryFactory
-                .select(qRequest.id.as("eventId"), qRequest.count().as("confirmedRequests"))
+                .select(qRequest.eventId.as("eventId"), qRequest.count().as("confirmedRequests"))
                 .from(qRequest)
-                .where(qRequest.id.in(eventIds).and(qRequest.status.eq(RequestStatus.CONFIRMED)))
-                .groupBy(qRequest.id)
+                .where(qRequest.eventId.in(eventIds).and(qRequest.status.eq(RequestStatus.CONFIRMED)))
+                .groupBy(qRequest.eventId)
                 .fetch()
                 .stream()
                 .collect(Collectors.toMap(

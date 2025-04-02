@@ -11,15 +11,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
-@FeignClient(name = "stats-server", url = "${stat-server.uri}")
+@FeignClient(name = "stats-server")
 public interface FeignStatClient {
     @PostMapping("/hit")
     void hit(@Valid @RequestBody EndpointHitDto endpointHitDto);
 
     @GetMapping("/stats")
-    List<ViewStatsDto> stats(@RequestParam("start") String start,
-                             @RequestParam("end") String end,
-                             @RequestParam("uris") List<String> uris,
-                             @RequestParam("unique") boolean unique);
+    List<ViewStatsDto> stats(@RequestParam(value = "start", required = false) String start,
+                             @RequestParam(value = "end", required = false) String end,
+                             @RequestParam(value = "uris", required = false) List<String> uris,
+                             @RequestParam(value = "unique", required = false) boolean unique);
 
 }

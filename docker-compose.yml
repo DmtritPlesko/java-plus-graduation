@@ -201,6 +201,7 @@ services:
 
   subscription-db:
     image: postgres:16.1
+
     container_name: postgres-ewm-subscription-db
     networks:
       - ewm-net
@@ -208,6 +209,8 @@ services:
       - POSTGRES_PASSWORD=root
       - POSTGRES_USER=root
       - POSTGRES_DB=ewm-subscription
+    volumes:
+      - ${PWD}/core/subscription-service/src/main/resources/schema.sql:/docker-entrypoint-initdb.d/schema.sql
     healthcheck:
       test: pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
       timeout: 10s
@@ -225,6 +228,8 @@ services:
       - POSTGRES_PASSWORD=root
       - POSTGRES_USER=root
       - POSTGRES_DB=ewm-request
+    volumes:
+      - ${PWD}/core/request-service/src/main/resources/schema.sql:/docker-entrypoint-initdb.d/schema.sql
     healthcheck:
       test: pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
       timeout: 5s

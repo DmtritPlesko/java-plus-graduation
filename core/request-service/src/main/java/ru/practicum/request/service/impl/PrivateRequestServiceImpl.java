@@ -6,6 +6,7 @@ import interaction.dto.event.EventFullDto;
 import interaction.dto.request.EventRequestStatusUpdateRequest;
 import interaction.dto.request.EventRequestStatusUpdateResult;
 import interaction.dto.request.ParticipationRequestDto;
+import interaction.dto.user.UserDto;
 import interaction.exception.ConflictException;
 import interaction.exception.NotFoundException;
 import lombok.AccessLevel;
@@ -21,6 +22,7 @@ import ru.practicum.request.service.PrivateRequestService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static ru.practicum.request.model.RequestStatus.CONFIRMED;
 
@@ -45,20 +47,30 @@ public class PrivateRequestServiceImpl implements PrivateRequestService {
     @Override
     @Transactional
     public EventRequestStatusUpdateResult update(long userId, long eventId, EventRequestStatusUpdateRequest updateRequest) {
-        userController.getBy(userId);
-        EventFullDto event = feignEventController.findById(eventId);
 
-        if (!event.getInitiator().getId().equals(userId)) {
+        Optional<UserDto> userDto = Optional.ofNullable(userController.getBy(userId));
+        if (userDto.isEmpty()) {
+            throw new NotFoundException("Пользователь с id = " + userId + " не найден");
+        }
+        Optional<EventFullDto> eventFullDto = Optional.ofNullable(feignEventController.findById(eventId));
+
+        if (eventFullDto.isEmpty()) {
             throw new NotFoundException("Событие с Id = " + eventId + " не найден");
+        }
+        EventFullDto event = eventFullDto.get();
+        if (!event.getInitiator().getId().equals(userId)) {
+            throw new NotFoundException("Пользователь с id = " + userId + " не является организатором мероприятия");
         }
 
         List<Long> requestsIds = updateRequest.getRequestIds();
         long confirmedRequests = requestRepository.countAllByEventIdAndStatusIs(eventId, CONFIRMED);
-        List<ParticipationRequest> requests = requestRepository.findAllByIdInAndEventIdIs(requestsIds, eventId);
+
         long limit = event.getParticipantLimit() - confirmedRequests;
         if (limit == 0) {
             throw new ConflictException("Количество подтвержденных запросов исчерпано: " + confirmedRequests);
         }
+
+        List<ParticipationRequest> requests = requestRepository.findAllByIdInAndEventIdIs(requestsIds, eventId);
         if (requests.size() != updateRequest.getRequestIds().size()) {
             throw new IllegalArgumentException("Не все запросы были найдены. Ошибка при вводе Ids");
         }

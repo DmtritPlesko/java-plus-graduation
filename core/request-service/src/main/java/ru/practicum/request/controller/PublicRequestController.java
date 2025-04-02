@@ -24,7 +24,7 @@ public class PublicRequestController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    ParticipationRequestDto send(@PathVariable long userId, @RequestParam Long eventId) {
+    ParticipationRequestDto send(@PathVariable("userId") long userId, @RequestParam("eventId") Long eventId) {
         return requestService.send(userId, eventId);
     }
 

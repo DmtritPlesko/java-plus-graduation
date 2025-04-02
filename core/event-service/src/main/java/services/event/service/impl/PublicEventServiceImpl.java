@@ -51,14 +51,14 @@ public class PublicEventServiceImpl implements PublicEventService {
         Set<String> uris = events.stream()
                 .map(event -> "/events/" + event.getId()).collect(Collectors.toSet());
 
-        LocalDateTime start = events
+        LocalDateTime end = events
                 .stream()
                 .min(Comparator.comparing(EventShortDto::getEventDate))
                 .orElseThrow(() -> new NotFoundException("Даты не заданы"))
                 .getEventDate();
 
         Map<String, Long> viewMap = statRestClient
-                .stats(start, LocalDateTime.now(), uris.stream().toList(), false).stream()
+                .stats(LocalDateTime.now(), end, uris.stream().toList(), false).stream()
                 .collect(Collectors.groupingBy(ViewStatsDto::getUri, Collectors.summingLong(ViewStatsDto::getHits)));
 
         return events.stream().peek(shortDto -> {
@@ -84,7 +84,7 @@ public class PublicEventServiceImpl implements PublicEventService {
                 .forEach(viewStatsDto -> event.setViews(viewStatsDto.getHits()));
 
         long confirmedRequests = feignRequestController
-                .countAllByEventIdAndStatusIs(eventId, RequestStatus.CONFIRMED);
+                .countAllByEventIdAndStatusIs(eventId, RequestStatus.CONFIRMED.name());
         event.setConfirmedRequests(confirmedRequests);
         return event;
     }
