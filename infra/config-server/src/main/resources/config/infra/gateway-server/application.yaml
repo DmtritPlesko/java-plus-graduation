@@ -1,9 +1,50 @@
 spring:
   cloud:
     gateway:
-      discovery.locator.enabled: true
+      discovery:
+        locator:
+          enabled: true
       routes:
-        - id: main_service_route
-          uri: lb://main-service
+        # User
+        - id: user_service_route
+          uri: lb://user-service
           predicates:
-            - Path=/**
+            - Path=/admin/users/**
+
+        #category
+        - id: event_service_category_route
+          uri: lb://event-service
+          predicates:
+            - Path=/admin/categories/**, /categories/**
+
+        #compilation
+        - id: event_service_compilation_route
+          uri: lb://event-service
+          predicates:
+            - Path=/compilations/**, /admin/compilations/**
+
+        #event
+        - id: event_service_route
+          uri: lb://event-service
+          predicates:
+            - Path=/admin/events/**, /users/{userId}/events, /users/{userId}/events/{eventId}, /events/**
+
+        - id: event_service_route_add_param
+          uri: lb://event-service
+          predicates:
+            - Path=/users/{userId}/events
+            - Query=from
+            - Query=size
+
+        #request
+        - id: request_service_route
+          uri: lb://request-service
+          predicates:
+            - Path=/users/{userId}/events/{eventId}/requests, /users/{userId}/requests/**, /requests/**
+
+          #subscription
+        - id: subscription_service_route
+          uri: lb://subscription-service
+          predicates:
+            - Path=/users/{userId}/subscriptions/**
+
