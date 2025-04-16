@@ -1,6 +1,5 @@
 package ewm;
 
-import ewm.client.FeignStatClient;
 import ewm.dto.EndpointHitDto;
 import ewm.dto.RequestParamDto;
 import ewm.dto.ViewStatsDto;
@@ -20,7 +19,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class StatController implements FeignStatClient {
+public class StatController {
     final StatService statService;
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
@@ -31,7 +30,6 @@ public class StatController implements FeignStatClient {
     }
 
     @GetMapping("/stats")
-    @Override
     public List<ViewStatsDto> stats(@RequestParam(value = "start", required = false) String start,
                                     @RequestParam(value = "end", required = false) String end,
                                     @RequestParam(value = "uris", required = false) List<String> uris,

@@ -3,7 +3,6 @@ package services.event.service.impl;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import ewm.client.StatRestClientImpl;
-import ewm.dto.ViewStatsDto;
 import interaction.controller.FeignRequestController;
 import interaction.controller.FeignUserController;
 import interaction.dto.event.EventFullDto;
@@ -57,12 +56,7 @@ public class PublicEventServiceImpl implements PublicEventService {
                 .orElseThrow(() -> new NotFoundException("Даты не заданы"))
                 .getEventDate();
 
-        Map<String, Long> viewMap = statRestClient
-                .stats(LocalDateTime.now(), end, uris.stream().toList(), false).stream()
-                .collect(Collectors.groupingBy(ViewStatsDto::getUri, Collectors.summingLong(ViewStatsDto::getHits)));
-
         return events.stream().peek(shortDto -> {
-            shortDto.setViews(viewMap.getOrDefault("/events/" + shortDto.getId(), 0L));
             shortDto.setConfirmedRequests(confirmedRequestsMap.getOrDefault(shortDto.getId(), 0L));
         }).toList();
     }
@@ -80,9 +74,6 @@ public class PublicEventServiceImpl implements PublicEventService {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime start = now.minusYears(10);
 
-        statRestClient.stats(start, now, List.of("/events/" + eventId), true)
-                .forEach(viewStatsDto -> event.setViews(viewStatsDto.getHits()));
-
         long confirmedRequests = feignRequestController
                 .countAllByEventIdAndStatusIs(eventId, RequestStatus.CONFIRMED.name());
         event.setConfirmedRequests(confirmedRequests);
@@ -97,6 +88,18 @@ public class PublicEventServiceImpl implements PublicEventService {
     @Override
     public List<Event> findAllByIn(Set<Long> ids) {
         return eventRepository.findAllByIdIn(ids);
+    }
+
+    @Override
+    public List<EventFullDto> getRecommendations(long userId, int maxResults) {
+        return List.of();
+    }
+
+    @Override
+    public void like(long eventId, long userId) {
+        if (feignRequestController.isExist(eventId, userId)) {
+
+        }
     }
 
     Map<Long, Long> getConfirmedRequestsMap(List<Long> eventIds) {

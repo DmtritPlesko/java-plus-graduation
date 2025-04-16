@@ -29,7 +29,7 @@ public interface EventMapper {
     @Mapping(source = "event.id", target = "id")
     @Mapping(target = "confirmedRequests", ignore = true)
     @Mapping(target = "initiator", ignore = true)
-    @Mapping(target = "views", ignore = true)
+    @Mapping(target = "rating", ignore = true)
     EventFullDto toEventFullDto(Event event, UserShortDto userShortDto);
 
     @Mapping(target = "id", ignore = true)

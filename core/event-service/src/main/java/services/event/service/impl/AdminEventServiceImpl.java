@@ -2,8 +2,6 @@ package services.event.service.impl;
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import ewm.client.StatRestClient;
-import ewm.dto.ViewStatsDto;
 import interaction.controller.FeignRequestController;
 import interaction.controller.FeignUserController;
 import interaction.dto.event.AdminEventParam;
@@ -38,7 +36,6 @@ public class AdminEventServiceImpl implements AdminEventService {
     final EventRepository eventRepository;
     final EventMapper eventMapper;
     final JPAQueryFactory jpaQueryFactory;
-    final StatRestClient statRestClient;
     final FeignRequestController requestController;
     final FeignUserController feignUserController;
     final UserMapper userMapper;
@@ -68,12 +65,7 @@ public class AdminEventServiceImpl implements AdminEventService {
                 .orElseThrow(() -> new NotFoundException("Даты не заданы"))
                 .getEventDate();
 
-        Map<String, Long> viewMap = statRestClient
-                .stats(LocalDateTime.now(), end, uris.stream().toList(), false).stream()
-                .collect(Collectors.groupingBy(ViewStatsDto::getUri, Collectors.summingLong(ViewStatsDto::getHits)));
-
         return events.stream().peek(shortDto -> {
-            shortDto.setViews(viewMap.getOrDefault("/events/" + shortDto.getId(), 0L));
             shortDto.setInitiator(userShortDto);
             shortDto.setConfirmedRequests(confirmedRequestsMap.getOrDefault(shortDto.getId(), 0L));
         }).toList();

@@ -18,4 +18,8 @@ public interface PublicEventService {
     boolean exists(Long id);
 
     List<Event> findAllByIn(Set<Long> ids);
+
+    List<EventFullDto> getRecommendations(long userId, int maxResults);
+
+    void like(long eventId, long userId);
 }

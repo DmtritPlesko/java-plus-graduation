@@ -30,16 +30,16 @@ public class AggregatorService {
     static final Double LIKE_WEIGHT = 1.0;
     final KafkaProducer<String, Object> kafkaProducer;
     final KafkaConsumer<String, UserActionAvro> kafkaConsumer;
+    @Value("${kafka.topics.actions}")
+    final String actionTopic;
+    @Value("${kafka.topics.similarity}")
+    final String similarityTopic;
     Map<Long, Map<Long, Double>> weights = new HashMap<>();
     Map<Long, Map<Long, Double>> minWeightsSum = new HashMap<>();
-    @Value("${kafka.topics.actions}")
-    String topic;
-    @Value("${kafka.topics.similarity}")
-    private String similarityTopic;
 
     public void start() {
 
-        kafkaConsumer.subscribe(Collections.singleton(topic));
+        kafkaConsumer.subscribe(Collections.singleton(actionTopic));
 
         while (true) {
             ConsumerRecords<String, UserActionAvro> records = kafkaConsumer.poll(Duration.ofMillis(1000));

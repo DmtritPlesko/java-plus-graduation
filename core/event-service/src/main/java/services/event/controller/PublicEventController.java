@@ -1,7 +1,6 @@
 package services.event.controller;
 
 import ewm.client.StatRestClient;
-import ewm.dto.EndpointHitDto;
 import interaction.dto.event.EventFullDto;
 import interaction.dto.event.EventShortDto;
 import interaction.dto.event.PublicEventParam;
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import services.event.model.Event;
 import services.event.service.PublicEventService;
 
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Set;
@@ -34,22 +32,26 @@ public class PublicEventController {
                                  @RequestParam(defaultValue = "0") int from,
                                  @RequestParam(defaultValue = "10") int size,
                                  HttpServletRequest request) {
-        List<EventShortDto> events = publicEventService.getAllBy(publicEventParam, PageRequest.of(from, size));
-        addHit("/events", request.getRemoteAddr());
-        return events;
+        return publicEventService.getAllBy(publicEventParam, PageRequest.of(from, size));
     }
 
     @GetMapping("/{eventId}")
-    EventFullDto getBy(@PathVariable long eventId, HttpServletRequest request) {
-        EventFullDto event = publicEventService.getBy(eventId);
-        addHit("/events/" + eventId, request.getRemoteAddr());
-        return event;
+    EventFullDto getBy(@PathVariable long eventId, HttpServletRequest request,
+                       @RequestHeader("X-EWM-USER-ID") long userId) {
+        return publicEventService.getBy(eventId);
     }
 
-    void addHit(String uri, String ip) {
-        LocalDateTime now = LocalDateTime.now();
-        EndpointHitDto hitDto = new EndpointHitDto("main-server", uri, ip, now.format(dateTimeFormatter));
-        statRestClient.addHit(hitDto);
+    @GetMapping("/recommendations")
+    List<EventFullDto> getRecommendations(HttpServletRequest request,
+                                          @RequestHeader("X-EWM-USER-ID") long userId,
+                                          @RequestParam("maxResults") int maxResults) {
+        return publicEventService.getRecommendations(userId, maxResults);
+    }
+
+    @PutMapping("/{eventId}/like")
+    void like(@PathVariable long eventId, HttpServletRequest request,
+              @RequestHeader("X-EWM-USER-ID") long userId) {
+        publicEventService.like(eventId, userId);
     }
 
     @GetMapping(path = "/exist/{categoryId}")

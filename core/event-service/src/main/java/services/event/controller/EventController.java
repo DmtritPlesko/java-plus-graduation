@@ -11,6 +11,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import services.event.service.EventService;
 
+import java.util.List;
+import java.util.Set;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "/events/feign")
@@ -29,5 +32,11 @@ public class EventController implements FeignEventController {
     @Override
     public EventFullDto findById(@RequestParam("eventId") Long eventId) {
         return service.findById(eventId);
+    }
+
+    @GetMapping(path = "/events")
+    @Override
+    public List<EventFullDto> findEventsByIds(@RequestParam Set<Long> ids) {
+        return List.of();
     }
 }

@@ -19,11 +19,11 @@ public class EventSimilarity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @Column(name = "user_id")
-    Long userId;
+    @Column(name = "event_id_a")
+    Long eventIdA;
 
-    @Column(name = "event_id")
-    Long eventId;
+    @Column(name = "event_id_b")
+    Long eventIdB;
 
     @Column(name = "result")
     Float maxResult;
