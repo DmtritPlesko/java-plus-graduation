@@ -322,6 +322,5 @@ services:
         condition: service_started
       recommendation-db:
         condition: service_healthy
-        
 networks:
   ewm-net:
