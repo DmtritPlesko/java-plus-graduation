@@ -45,14 +45,12 @@ services:
         condition: service_healthy
       event-service:
         condition: service_healthy
-      stats-server:
-        condition: service_healthy
     networks:
       - ewm-net
     environment:
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
 
-      #      Event-service
+    #      Event-service
   event-service:
     build: core/event-service
     container_name: event-service
@@ -60,8 +58,6 @@ services:
       event-db:
         condition: service_healthy
       config-server:
-        condition: service_healthy
-      stats-server:
         condition: service_healthy
     networks:
       - ewm-net
@@ -99,8 +95,6 @@ services:
       event-db:
         condition: service_healthy
       config-server:
-        condition: service_healthy
-      stats-server:
         condition: service_healthy
     networks:
       - ewm-net
@@ -142,8 +136,6 @@ services:
         condition: service_healthy
       config-server:
         condition: service_healthy
-      stats-server:
-        condition: service_healthy
       user-service:
         condition: service_healthy
     networks:
@@ -162,7 +154,6 @@ services:
 
   subscription-db:
     image: postgres:16.1
-
     container_name: postgres-ewm-subscription-db
     networks:
       - ewm-net
@@ -193,9 +184,9 @@ services:
       - ${PWD}/core/request-service/src/main/resources/schema.sql:/docker-entrypoint-initdb.d/schema.sql
     healthcheck:
       test: pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
-      timeout: 5s
-      interval: 10s
-      retries: 15
+      timeout: 10s
+      interval: 30s
+      retries: 20
 
   request-service:
     build: core/request-service
@@ -225,14 +216,14 @@ services:
       interval: 25s
       retries: 10
 
-#  KAFKA
+  #  KAFKA
   kafka:
     image: confluentinc/confluent-local:7.4.3
     hostname: kafka
     container_name: kafka
     ports:
-      - "9092:9092" # for client connections
-      - "9101:9101" # JMX
+      - "9092:9092"
+      - "9101:9101"
     restart: unless-stopped
     networks:
       - ewm-net
@@ -262,7 +253,7 @@ services:
                                  --bootstrap-server kafka:29092'"
     init: true
 
-#  COllector
+  #  Collector
   collector-service:
     build: stats/collector
     container_name: ewm-collector-service
@@ -277,7 +268,7 @@ services:
       config-server:
         condition: service_healthy
 
-#  Aggregator
+  #  Aggregator
   aggregator-service:
     build: stats/aggregator
     container_name: ewm-aggregator-service
@@ -290,7 +281,7 @@ services:
       collector-service:
         condition: service_started
 
-#  Analyzer
+  #  Analyzer
   recommendation-db:
     image: postgres:16.1
     container_name: postgres-ewm-recommendation-db
@@ -300,11 +291,14 @@ services:
       - POSTGRES_PASSWORD=root
       - POSTGRES_USER=root
       - POSTGRES_DB=ewm-recommendation
+#    volumes:
+#      - ${PWD}/stats/analyzer/src/main/resources/schema.sql:/docker-entrypoint-initdb.d/schema.sql
     healthcheck:
       test: pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
       timeout: 5s
       interval: 10s
       retries: 15
+
   analyzer-service:
     build: stats/analyzer
     container_name: ewm-analyzer-service
@@ -322,6 +316,5 @@ services:
         condition: service_started
       recommendation-db:
         condition: service_healthy
-        
 networks:
   ewm-net:

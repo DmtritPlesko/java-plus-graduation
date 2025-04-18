@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @Setter
-@Table(name = "similarity")
+@Table(name = "similarities")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class EventSimilarity {
 
@@ -26,7 +26,7 @@ public class EventSimilarity {
     Long eventIdB;
 
     @Column(name = "result")
-    Float maxResult;
+    double maxResult;
 
     @Column(name = "time")
     LocalDateTime time;

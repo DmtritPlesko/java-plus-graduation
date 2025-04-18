@@ -2,7 +2,6 @@ package services.event.service.impl;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import ewm.client.StatRestClientImpl;
 import interaction.controller.FeignRequestController;
 import interaction.controller.FeignUserController;
 import interaction.dto.event.*;
@@ -43,7 +42,6 @@ public class PrivateEventServiceImpl implements PrivateEventService {
     final EventRepository eventRepository;
     final CategoryMapper categoryMapper;
     final EventMapper eventMapper;
-    final StatRestClientImpl statRestClient;
     final JPAQueryFactory jpaQueryFactory;
     final UserMapper userMapper;
     final FeignUserController userController;

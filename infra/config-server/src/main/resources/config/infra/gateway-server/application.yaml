@@ -48,3 +48,9 @@ spring:
           predicates:
             - Path=/users/{userId}/subscriptions/**
 
+        #recommendations-service
+        - id: recommendation_service
+          uri: ld://event-service
+          predicates:
+              - Path=/events/recommendations
+#              - Query=maxResults

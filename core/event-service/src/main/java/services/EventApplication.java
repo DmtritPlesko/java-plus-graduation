@@ -11,7 +11,7 @@ import org.springframework.context.annotation.ComponentScan;
 @EnableDiscoveryClient
 @ConfigurationPropertiesScan
 @EnableFeignClients(basePackages = {"interaction.controller", "ewm.client"})
-@ComponentScan(basePackages = {"services", "ewm.client"})
+@ComponentScan(basePackages = {"services", "ewm.clients"})
 public class EventApplication {
     public static void main(String[] args) {
         SpringApplication.run(EventApplication.class, args);

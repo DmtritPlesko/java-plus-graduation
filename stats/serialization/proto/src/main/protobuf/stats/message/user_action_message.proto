@@ -1,5 +1,5 @@
 syntax = "proto3";
-package stats.message;
+package stats.service.collector;
 
 option java_package = "ru.practicum.grpc.stats.action";
 
@@ -11,9 +11,13 @@ enum ActionTypeProto {
   ACTION_LIKE = 2;
 }
 
-message UserActionProto {
+message UserActionRequest {
   int64 user_id = 1;
   int64 event_id = 2;
   ActionTypeProto action_type = 3;
   google.protobuf.Timestamp timestamp = 4;
+}
+
+message UserActionResponse {
+  bool success = 1;
 }

@@ -1,6 +1,5 @@
 package services.event.controller;
 
-import ewm.client.StatRestClient;
 import interaction.dto.event.EventFullDto;
 import interaction.dto.event.EventShortDto;
 import interaction.dto.event.PublicEventParam;
@@ -25,42 +24,43 @@ import java.util.Set;
 public class PublicEventController {
     final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     final PublicEventService publicEventService;
-    final StatRestClient statRestClient;
 
     @GetMapping
-    List<EventShortDto> getAllBy(@Valid @ModelAttribute PublicEventParam publicEventParam,
-                                 @RequestParam(defaultValue = "0") int from,
-                                 @RequestParam(defaultValue = "10") int size,
-                                 HttpServletRequest request) {
+    public List<EventShortDto> getAllBy(@Valid @ModelAttribute PublicEventParam publicEventParam,
+                                        @RequestParam(defaultValue = "0") int from,
+                                        @RequestParam(defaultValue = "10") int size,
+                                        HttpServletRequest request) {
         return publicEventService.getAllBy(publicEventParam, PageRequest.of(from, size));
     }
 
     @GetMapping("/{eventId}")
-    EventFullDto getBy(@PathVariable long eventId, HttpServletRequest request,
-                       @RequestHeader("X-EWM-USER-ID") long userId) {
+    public EventFullDto getBy(@PathVariable("eventId") long eventId,
+                              HttpServletRequest request,
+                              @RequestHeader("X-EWM-USER-ID") long userId) {
         return publicEventService.getBy(eventId);
     }
 
     @GetMapping("/recommendations")
-    List<EventFullDto> getRecommendations(HttpServletRequest request,
-                                          @RequestHeader("X-EWM-USER-ID") long userId,
-                                          @RequestParam("maxResults") int maxResults) {
+    public List<EventFullDto> getRecommendations(HttpServletRequest request,
+                                                 @RequestHeader("X-EWM-USER-ID") long userId,
+                                                 @RequestParam("maxResults") int maxResults) {
         return publicEventService.getRecommendations(userId, maxResults);
     }
 
     @PutMapping("/{eventId}/like")
-    void like(@PathVariable long eventId, HttpServletRequest request,
-              @RequestHeader("X-EWM-USER-ID") long userId) {
+    public void like(@PathVariable("eventId") long eventId,
+                     HttpServletRequest request,
+                     @RequestHeader("X-EWM-USER-ID") long userId) {
         publicEventService.like(eventId, userId);
     }
 
     @GetMapping(path = "/exist/{categoryId}")
-    boolean existEventByCategoryId(@PathVariable("categoryId") Long id) {
+    public boolean existEventByCategoryId(@PathVariable("categoryId") Long id) {
         return publicEventService.exists(id);
     }
 
     @GetMapping(path = "/allin")
-    List<Event> findAllByIn(@RequestParam Set<Long> ids) {
+    public List<Event> findAllByIn(@RequestParam Set<Long> ids) {
         return publicEventService.findAllByIn(ids);
     }
 }

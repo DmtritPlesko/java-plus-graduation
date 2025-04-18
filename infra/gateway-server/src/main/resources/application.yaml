@@ -15,13 +15,31 @@ spring:
       discovery:
         enabled: true
         serviceId: config-server
+  cloud.gateway:
+    discovery:
+      locator:
+        enabled: true
+        lower-case-service-id: true
 
 eureka:
   client:
     serviceUrl:
       defaultZone: http://localhost:8761/eureka/
+    fetch-registry: true
+    register-with-eureka: true
   instance:
     preferIpAddress: true
     hostname: localhost
     instanceId: "${spring.application.name}:${server.port}"
     leaseRenewalIntervalInSeconds: 10
+
+management:
+  endpoint:
+    gateway:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: gateway,health,info
+  endpoint.health:
+    show-details: always

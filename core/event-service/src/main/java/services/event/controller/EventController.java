@@ -37,6 +37,6 @@ public class EventController implements FeignEventController {
     @GetMapping(path = "/events")
     @Override
     public List<EventFullDto> findEventsByIds(@RequestParam Set<Long> ids) {
-        return List.of();
+        return service.findEventsByIds(ids);
     }
 }

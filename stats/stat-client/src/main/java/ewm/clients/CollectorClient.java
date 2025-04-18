@@ -5,25 +5,25 @@ import io.grpc.StatusRuntimeException;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import net.devh.boot.grpc.client.inject.GrpcClient;
-import org.springframework.stereotype.Component;
-import ru.practicum.grpc.stats.action.CollectorControllerGrpc;
+import org.springframework.stereotype.Service;
+import ru.practicum.grpc.stats.action.UserActionControllerGrpc;
 import ru.practicum.grpc.stats.action.UserActionMessage;
 
 import java.time.Instant;
 
-@Component
+@Service
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CollectorClient {
 
-    final CollectorControllerGrpc.CollectorControllerStub blockingStub;
+    final UserActionControllerGrpc.UserActionControllerBlockingStub blockingStub;
 
-    public CollectorClient(@GrpcClient("collector") CollectorControllerGrpc.CollectorControllerStub blockingStub) {
+    public CollectorClient(@GrpcClient("collector") UserActionControllerGrpc.UserActionControllerBlockingStub blockingStub) {
         this.blockingStub = blockingStub;
 
     }
 
     public void sendUserAction(long userId, long eventId, UserActionMessage.ActionTypeProto actionType) {
-        UserActionMessage.UserActionProto userAction = UserActionMessage.UserActionProto.newBuilder()
+        UserActionMessage.UserActionRequest userAction = UserActionMessage.UserActionRequest.newBuilder()
                 .setUserId(userId)
                 .setEventId(eventId)
                 .setActionType(actionType)
@@ -34,7 +34,7 @@ public class CollectorClient {
                 .build();
 
         try {
-            blockingStub.collectAction(userAction);
+            blockingStub.collectUserAction(userAction);
         } catch (StatusRuntimeException e) {
             e.printStackTrace();
         }

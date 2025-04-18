@@ -1,11 +1,27 @@
-kafka:
-  topics:
-    actions: "stats.user-actions.v1"
-    similarity: "stats.events-similarity.v1"
-  bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
-  key-deserializer: "org.apache.kafka.common.serialization.StringDeserializer"
-  value-deserializer-similarity: "analyzer.deserializer.EventAvroDeserializer"
-  value-deserializer-actions: "ru.practicum.ewm.stats.analyzer.UserActionAvroDeserializer"
-  consumer-analyzer-actions-group-id: "groupAnalyzerActionsConsumer"
-  consumer-analyzer-similarity-group-id: "groupAnalyzerSimilarityConsumer"
-  auto-offset-reset: "earliest"
+spring:
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        jdbc:
+          time_zone: UTC
+        format_sql: true
+    open-in-view: false
+
+  datasource:
+    url: jdbc:postgresql://recommendation-db:5432/ewm-recommendation?currentSchema=public
+    username: root
+    password: root
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 10
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+
+  sql:
+    init:
+      mode: never

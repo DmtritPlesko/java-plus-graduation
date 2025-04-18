@@ -1,6 +1,10 @@
+server:
+  port: 8088
+
 grpc:
   server:
-    port: 0
+    port: 6565
+    enabled: true
 
 spring:
   application:
@@ -8,11 +12,19 @@ spring:
   config:
     import: "configserver:"
   cloud:
+    loadbalancer:
+      cache:
+        caffeine:
+          spec: maximumSize=100, expireAfterAccess=10m
     config:
       discovery:
         enabled: true
-        serviceId: collector
+        serviceId: config-server
       fail-fast: true
+      retry:
+        useRandomPolicy: true
+        max-interval: 6000
+
 eureka:
   client:
     serviceUrl:
@@ -20,5 +32,16 @@ eureka:
   instance:
     preferIpAddress: true
     hostname: localhost
-    instanceId: "${spring.application.name}:${server.port}"
-    leaseRenewalIntervalInSeconds: 10
+    instance-id: "${spring.application.name}:${server.port}"
+    lease-renewal-interval-in-seconds: 20
+    metadata-map:
+      grpcPort: 6565
+
+kafka:
+  topic:
+    write: "stats.user-actions.v1"
+  bootstrap-servers: localhost:9092
+  key-serializer: "org.apache.kafka.common.serialization.StringSerializer"
+  value-serializer: "serializer.CollectorSerializer"
+  ssl:
+    enabled: false

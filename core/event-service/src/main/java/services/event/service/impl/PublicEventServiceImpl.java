@@ -2,7 +2,8 @@ package services.event.service.impl;
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import ewm.client.StatRestClientImpl;
+import ewm.clients.AnalyzerClient;
+import ewm.clients.CollectorClient;
 import interaction.controller.FeignRequestController;
 import interaction.controller.FeignUserController;
 import interaction.dto.event.EventFullDto;
@@ -17,6 +18,7 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.grpc.stats.action.UserActionMessage;
 import services.category.model.QCategory;
 import services.event.mappers.EventMapper;
 import services.event.model.Event;
@@ -33,11 +35,12 @@ import java.util.stream.Collectors;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class PublicEventServiceImpl implements PublicEventService {
     final EventRepository eventRepository;
-    final StatRestClientImpl statRestClient;
     final EventMapper eventMapper;
     final JPAQueryFactory jpaQueryFactory;
     final FeignRequestController feignRequestController;
     final FeignUserController feignUserController;
+    final CollectorClient collectorClient;
+    final AnalyzerClient analyzerClient;
 
     @Override
     @Transactional(readOnly = true)
@@ -92,13 +95,17 @@ public class PublicEventServiceImpl implements PublicEventService {
 
     @Override
     public List<EventFullDto> getRecommendations(long userId, int maxResults) {
-        return List.of();
+        return eventRepository.findAllByIdIn(analyzerClient.getRecommendationsForUser(userId, maxResults))
+                .stream().map(eventMapper::toEventFullDto).toList();
     }
 
     @Override
     public void like(long eventId, long userId) {
         if (feignRequestController.isExist(eventId, userId)) {
-
+            collectorClient.sendUserAction(userId, eventId, UserActionMessage.ActionTypeProto.ACTION_LIKE);
+        } else {
+            throw new NotFoundException("События с id = " + eventId
+                    + " и пользователем с id = " + userId + " не найдено");
         }
     }
 

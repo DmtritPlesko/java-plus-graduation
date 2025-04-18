@@ -1,6 +1,10 @@
+server:
+  port: 6589
+
 grpc:
   server:
-    port: 0
+    port: 6588
+    enabled: true
 
 spring:
   application:
@@ -11,8 +15,20 @@ spring:
     config:
       discovery:
         enabled: true
-        serviceId: analyzer
+        serviceId: config-server
       fail-fast: true
+      retry:
+        useRandomPolicy: true
+        max-interval: 6000
+  flyway:
+    flyway:
+      # Явно указываем PostgreSQL и игнорируем проверку версии
+      database: postgresql
+      ignore-future-migrations: true
+      # Дополнительные параметры для PostgreSQL 16
+      postgresql:
+        transactional-lock: false
+
 eureka:
   client:
     serviceUrl:
@@ -20,5 +36,26 @@ eureka:
   instance:
     preferIpAddress: true
     hostname: localhost
-    instanceId: "${spring.application.name}:${server.port}"
-    leaseRenewalIntervalInSeconds: 10
+    instance-id: "${spring.application.name}:${server.port}"
+    lease-renewal-interval-in-seconds: 10
+    metadata-map:
+      grpcPort: 6588
+
+kafka:
+  topics:
+    actions: "stats.user-actions.v1"
+    similarity: "stats.events-similarity.v1"
+  bootstrap-servers: localhost:9092
+  key-deserializer: "org.apache.kafka.common.serialization.StringDeserializer"
+  value-deserializer-similarity: "analyzer.deserializer.EventAvroDeserializer"
+  value-deserializer-actions: "analyzer.deserializer.UserAvroDeserializer"
+  consumer-analyzer-actions-group-id: "groupAnalyzerActionsConsumer"
+  consumer-analyzer-similarity-group-id: "groupAnalyzerSimilarityConsumer"
+  auto-offset-reset: "earliest"
+  ssl:
+    enabled: false
+
+logging:
+  level:
+    org.springframework.cloud.netflix.eureka: DEBUG
+    com.netflix.discovery: DEBUG

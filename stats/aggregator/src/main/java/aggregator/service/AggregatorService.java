@@ -10,7 +10,7 @@ import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import ru.practicum.ewm.stats.avro.EventSimilarityAvro;
 import ru.practicum.ewm.stats.avro.UserActionAvro;
 
@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Slf4j
-@Service
+@Component
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class AggregatorService {
@@ -31,11 +31,11 @@ public class AggregatorService {
     final KafkaProducer<String, Object> kafkaProducer;
     final KafkaConsumer<String, UserActionAvro> kafkaConsumer;
     @Value("${kafka.topics.actions}")
-    final String actionTopic;
+    String actionTopic;
     @Value("${kafka.topics.similarity}")
-    final String similarityTopic;
-    Map<Long, Map<Long, Double>> weights = new HashMap<>();
-    Map<Long, Map<Long, Double>> minWeightsSum = new HashMap<>();
+    String similarityTopic;
+    Map<Long, Map<Long, Double>> weights = Collections.synchronizedMap(new HashMap<>());
+    Map<Long, Map<Long, Double>> minWeightsSum = Collections.synchronizedMap(new HashMap<>());
 
     public void start() {
 
@@ -61,8 +61,8 @@ public class AggregatorService {
                     }
                 }
 
-                double weightAction = 0;
-
+                double weightActionOld = 0;
+                double weightActionNew = tempWeight;
                 if (weights.get(userActionAvro.getEventId()) == null
                         || weights.get(userActionAvro.getEventId()).get(userActionAvro.getUserId()) == null) {
 
@@ -71,28 +71,28 @@ public class AggregatorService {
 
                 } else {
 
-                    weightAction = Math.max(weights.get(userActionAvro.getEventId())
+                    weightActionNew = Math.max(weights.get(userActionAvro.getEventId())
                             .get(userActionAvro.getUserId()), tempWeight);
 
-                    tempWeight = weights.get(userActionAvro.getEventId()).get(userActionAvro.getUserId());
+                    weightActionOld = weights.get(userActionAvro.getEventId()).get(userActionAvro.getUserId());
 
                 }
 
-                if (weightAction > tempWeight) {
+                if (weightActionNew > weightActionOld) {
                     for (Long eventId : weights.keySet()) {
                         if (weights.get(eventId).get(userActionAvro.getUserId()) != null
                                 && eventId != userActionAvro.getEventId()) {
 
-                            double sumWightUsers = sumMinWeightAllUser(eventId, userActionAvro.getEventId());
+                            double sumWightUsers = sumMinWeightAllUser(userActionAvro.getEventId(),eventId);
                             double sumA = sumWeightForUser(userActionAvro.getEventId());
                             double sumB = sumWeightForUser(eventId);
 
                             double minOld = Math.min(
-                                    tempWeight,
+                                    weightActionOld,
                                     weights.get(eventId).get(userActionAvro.getUserId()));
 
                             double minNew = Math.min(
-                                    weightAction,
+                                    weightActionNew,
                                     weights.get(eventId).get(userActionAvro.getUserId()));
 
                             double deltaMin = minNew - minOld;
@@ -102,22 +102,23 @@ public class AggregatorService {
                                 put(userActionAvro.getEventId(), eventId, sMinNew);
                             }
 
-                            double deltaWeightA = weightAction
+                            double deltaWeightA = weightActionNew
                                     - weights.get(userActionAvro.getEventId()).get(userActionAvro.getUserId());
                             double sAnew = sumA + deltaWeightA;
 
                             double similarity = sMinNew / (Math.sqrt(sAnew) * Math.sqrt(sumB));
 
                             EventSimilarityAvro eventSimilarityAvro = new EventSimilarityAvro(
-                                    userActionAvro.getEventId(),
                                     eventId,
+                                    userActionAvro.getEventId(),
                                     similarity,
                                     userActionAvro.getTimestamp());
+
                             sendEvent(eventSimilarityAvro);
                         }
                     }
                 }
-                weights.get(userActionAvro.getEventId()).put(userActionAvro.getUserId(), weightAction);
+                weights.get(userActionAvro.getEventId()).put(userActionAvro.getUserId(), weightActionNew);
             }
             kafkaConsumer.commitAsync();
         }
@@ -132,6 +133,15 @@ public class AggregatorService {
                 exception.printStackTrace();
             }
         });
+    }
+
+    private void put(long eventA, long eventB, double sum) {
+        long first = Math.min(eventA, eventB);
+        long second = Math.max(eventA, eventB);
+
+        minWeightsSum
+                .computeIfAbsent(first, e -> new HashMap<>())
+                .put(second, sum);
     }
 
     private Double sumMinWeightAllUser(Long eventAId, Long eventBId) {
@@ -158,22 +168,11 @@ public class AggregatorService {
 
     private Double sumWeightForUser(Long eventId) {
 
-        Double sum = 0.0;
-
-        for (Long id : weights.get(eventId).keySet()) {
-            sum += weights.get(eventId).get(id);
-        }
-
-        return sum;
-    }
-
-    private void put(long eventA, long eventB, double sum) {
-        long first = Math.min(eventA, eventB);
-        long second = Math.max(eventA, eventB);
-
-        minWeightsSum
-                .computeIfAbsent(first, e -> new HashMap<>())
-                .put(second, sum);
+        return weights.getOrDefault(eventId, Collections.emptyMap())
+                .values()
+                .stream()
+                .mapToDouble(Double::doubleValue)
+                .sum();
     }
 
 }
