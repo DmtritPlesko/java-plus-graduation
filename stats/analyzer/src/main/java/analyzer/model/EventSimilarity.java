@@ -26,7 +26,7 @@ public class EventSimilarity {
     Long eventIdB;
 
     @Column(name = "result")
-    Float maxResult;
+    double maxResult;
 
     @Column(name = "time")
     LocalDateTime time;

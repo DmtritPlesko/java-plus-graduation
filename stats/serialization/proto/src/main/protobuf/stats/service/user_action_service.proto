@@ -7,5 +7,5 @@ import "stats/message/user_action_message.proto";
 import "google/protobuf/empty.proto";
 
 service CollectorController {
-  rpc CollectAction(message.UserActionProto) returns (google.protobuf.Empty);
+  rpc CollectAction(stats.message.UserActionProto) returns (google.protobuf.Empty);
 }

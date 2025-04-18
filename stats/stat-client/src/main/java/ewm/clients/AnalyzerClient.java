@@ -4,7 +4,7 @@ import io.grpc.StatusRuntimeException;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import net.devh.boot.grpc.client.inject.GrpcClient;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import ru.practicum.grpc.stats.recommendation.RecommendationMessage;
 import ru.practicum.grpc.stats.recommendation.RecommendationsControllerGrpc;
 
@@ -13,7 +13,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 
-@Component
+@Service
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class AnalyzerClient {
     private final RecommendationsControllerGrpc.RecommendationsControllerBlockingStub blockingStub;

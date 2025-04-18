@@ -5,19 +5,19 @@ import io.grpc.StatusRuntimeException;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import net.devh.boot.grpc.client.inject.GrpcClient;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import ru.practicum.grpc.stats.action.CollectorControllerGrpc;
 import ru.practicum.grpc.stats.action.UserActionMessage;
 
 import java.time.Instant;
 
-@Component
+@Service
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CollectorClient {
 
-    final CollectorControllerGrpc.CollectorControllerStub blockingStub;
+    final CollectorControllerGrpc.CollectorControllerBlockingStub blockingStub;
 
-    public CollectorClient(@GrpcClient("collector") CollectorControllerGrpc.CollectorControllerStub blockingStub) {
+    public CollectorClient(@GrpcClient("collector") CollectorControllerGrpc.CollectorControllerBlockingStub blockingStub) {
         this.blockingStub = blockingStub;
 
     }

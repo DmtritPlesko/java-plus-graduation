@@ -10,7 +10,7 @@ import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import ru.practicum.ewm.stats.avro.EventSimilarityAvro;
 import ru.practicum.ewm.stats.avro.UserActionAvro;
 
@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Slf4j
-@Service
+@Component
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class AggregatorService {
@@ -31,11 +31,11 @@ public class AggregatorService {
     final KafkaProducer<String, Object> kafkaProducer;
     final KafkaConsumer<String, UserActionAvro> kafkaConsumer;
     @Value("${kafka.topics.actions}")
-    final String actionTopic;
+    String actionTopic;
     @Value("${kafka.topics.similarity}")
-    final String similarityTopic;
-    Map<Long, Map<Long, Double>> weights = new HashMap<>();
-    Map<Long, Map<Long, Double>> minWeightsSum = new HashMap<>();
+    String similarityTopic;
+    Map<Long, Map<Long, Double>> weights = Collections.synchronizedMap(new HashMap<>());
+    Map<Long, Map<Long, Double>> minWeightsSum = Collections.synchronizedMap(new HashMap<>());
 
     public void start() {
 
@@ -158,13 +158,11 @@ public class AggregatorService {
 
     private Double sumWeightForUser(Long eventId) {
 
-        Double sum = 0.0;
-
-        for (Long id : weights.get(eventId).keySet()) {
-            sum += weights.get(eventId).get(id);
-        }
-
-        return sum;
+        return weights.getOrDefault(eventId, Collections.emptyMap())
+                .values()
+                .stream()
+                .mapToDouble(Double::doubleValue)
+                .sum();
     }
 
     private void put(long eventA, long eventB, double sum) {

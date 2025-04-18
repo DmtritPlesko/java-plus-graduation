@@ -7,13 +7,11 @@ import org.apache.avro.io.DecoderFactory;
 import org.apache.avro.specific.SpecificDatumReader;
 import org.apache.kafka.common.errors.SerializationException;
 import org.apache.kafka.common.serialization.Deserializer;
-import org.springframework.stereotype.Component;
 import ru.practicum.ewm.stats.avro.UserActionAvro;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
-@Component
 @Slf4j
 public class UserAvroDeserializer implements Deserializer<UserActionAvro> {
 

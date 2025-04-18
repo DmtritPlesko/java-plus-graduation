@@ -8,6 +8,7 @@ import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import ru.practicum.ewm.stats.avro.UserActionAvro;
@@ -20,12 +21,19 @@ import java.util.Properties;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class KafkaConfig {
 
+    @Value("${kafka.bootstrap-servers}")
     String server;
+    @Value("${kafka.key-serializer}")
     String keySerializer;
+    @Value("${kafka.value-serializer}")
     String valueSerializer;
+    @Value("${kafka.key-deserializer}")
     String keyDeserializer;
+    @Value("${kafka.value-deserializer}")
     String valueDeserializer;
+    @Value("${kafka.consumer-group-id}")
     String consumerGroupId;
+    @Value("${kafka.auto-offset-reset}")
     String autoOffsetReset;
 
     @Bean

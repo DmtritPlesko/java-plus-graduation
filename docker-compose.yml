@@ -45,8 +45,6 @@ services:
         condition: service_healthy
       event-service:
         condition: service_healthy
-      stats-server:
-        condition: service_healthy
     networks:
       - ewm-net
     environment:
@@ -60,8 +58,6 @@ services:
       event-db:
         condition: service_healthy
       config-server:
-        condition: service_healthy
-      stats-server:
         condition: service_healthy
     networks:
       - ewm-net
@@ -99,8 +95,6 @@ services:
       event-db:
         condition: service_healthy
       config-server:
-        condition: service_healthy
-      stats-server:
         condition: service_healthy
     networks:
       - ewm-net
@@ -141,8 +135,6 @@ services:
       subscription-db:
         condition: service_healthy
       config-server:
-        condition: service_healthy
-      stats-server:
         condition: service_healthy
       user-service:
         condition: service_healthy
@@ -231,8 +223,8 @@ services:
     hostname: kafka
     container_name: kafka
     ports:
-      - "9092:9092" # for client connections
-      - "9101:9101" # JMX
+      - "9092:9092"
+      - "9101:9101"
     restart: unless-stopped
     networks:
       - ewm-net
@@ -262,7 +254,7 @@ services:
                                  --bootstrap-server kafka:29092'"
     init: true
 
-#  COllector
+#  Collector
   collector-service:
     build: stats/collector
     container_name: ewm-collector-service
@@ -305,6 +297,7 @@ services:
       timeout: 5s
       interval: 10s
       retries: 15
+
   analyzer-service:
     build: stats/analyzer
     container_name: ewm-analyzer-service
@@ -322,6 +315,6 @@ services:
         condition: service_started
       recommendation-db:
         condition: service_healthy
-        
+
 networks:
   ewm-net:

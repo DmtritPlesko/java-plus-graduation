@@ -20,8 +20,9 @@ import ru.practicum.ewm.stats.avro.UserActionAvro;
 public class CollectorServiceImpl implements CollectorService {
 
     final KafkaProducer<String, Object> kafkaProducer;
+
     @Value("${kafka.topic.write}")
-    final String topic;
+    String topic;
 
     private static void onCompletion(RecordMetadata recordMetadata, Exception exception) throws KafkaException {
         if (exception == null) {

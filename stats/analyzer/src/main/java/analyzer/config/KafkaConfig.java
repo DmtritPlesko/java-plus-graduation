@@ -43,7 +43,7 @@ public class KafkaConfig {
     String autoOffsetReset;
 
 
-    private Properties baseConsumer() {
+    private Properties propertiesConsumer() {
 
         Properties props = new Properties();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
@@ -56,14 +56,8 @@ public class KafkaConfig {
     }
 
     @Bean
-    public KafkaConsumer<String, EventSimilarityAvro> similarityConsumer() {
-        return new KafkaConsumer<>(baseConsumer());
-    }
-
-    @Bean
-    public KafkaConsumer<String, EventSimilarityAvro> actionConsumer() {
-
-        return new KafkaConsumer<>(baseConsumer());
+    public KafkaConsumer<String, EventSimilarityAvro> baseConsumer() {
+        return new KafkaConsumer<>(propertiesConsumer());
     }
 
 }

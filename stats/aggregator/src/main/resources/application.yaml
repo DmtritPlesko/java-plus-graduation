@@ -23,3 +23,15 @@ eureka:
     hostname: localhost
     instance-id: ${spring.application.name}:${random.value}
     lease-renewal-interval-in-seconds: 10
+
+kafka:
+  topics:
+    actions: "stats.user-actions.v1"
+    similarity: "stats.events-similarity.v1"
+  bootstrap-servers: localhost:9092
+  key-deserializer: "org.apache.kafka.common.serialization.StringDeserializer"
+  value-deserializer: "aggregator.deserializer.UserAvroDeserializer"
+  key-serializer: "org.apache.kafka.common.serialization.StringSerializer"
+  value-serializer: "aggregator.serializer.EventSimilarityAvroSerializer"
+  consumer-group-id: "groupAggregatorConsumer"
+  auto-offset-reset: "earliest"
