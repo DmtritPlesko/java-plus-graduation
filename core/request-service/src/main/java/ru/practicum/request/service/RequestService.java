@@ -11,4 +11,6 @@ public interface RequestService {
     Map<Long, Long> getConfirmedRequestsMap(List<Long> eventIds);
 
     long countAllByEventIdAndStatusIs(Long id, RequestStatus status);
+
+    boolean isExist(Long eventId, Long userId);
 }

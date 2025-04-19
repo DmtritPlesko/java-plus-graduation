@@ -1,0 +1,42 @@
+spring:
+  application:
+    name: analyzer
+  config:
+    import: "configserver:"
+  cloud:
+    config:
+      discovery:
+        enabled: true
+        serviceId: config-server
+      fail-fast: true
+      retry:
+        useRandomPolicy: true
+        max-interval: 6000
+  server:
+    port: 0
+grpc:
+  server:
+    port: 0
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    preferIpAddress: true
+    hostname: localhost
+    instance-id: ${spring.application.name}:${random.value}
+    lease-renewal-interval-in-seconds: 10
+    metadata-map:
+      grpc-port: ${grpc.server.port}
+
+kafka:
+  topics:
+    actions: "stats.user-actions.v1"
+    similarity: "stats.events-similarity.v1"
+  bootstrap-servers: localhost:9092
+  key-deserializer: "org.apache.kafka.common.serialization.StringDeserializer"
+  value-deserializer-similarity: "analyzer.deserializer.EventAvroDeserializer"
+  value-deserializer-actions: "ru.practicum.ewm.stats.analyzer.UserActionAvroDeserializer"
+  consumer-analyzer-actions-group-id: "groupAnalyzerActionsConsumer"
+  consumer-analyzer-similarity-group-id: "groupAnalyzerSimilarityConsumer"
+  auto-offset-reset: "earliest"

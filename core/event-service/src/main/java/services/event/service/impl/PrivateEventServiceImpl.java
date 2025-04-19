@@ -2,8 +2,6 @@ package services.event.service.impl;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import ewm.client.StatRestClientImpl;
-import ewm.dto.ViewStatsDto;
 import interaction.controller.FeignRequestController;
 import interaction.controller.FeignUserController;
 import interaction.dto.event.*;
@@ -44,7 +42,6 @@ public class PrivateEventServiceImpl implements PrivateEventService {
     final EventRepository eventRepository;
     final CategoryMapper categoryMapper;
     final EventMapper eventMapper;
-    final StatRestClientImpl statRestClient;
     final JPAQueryFactory jpaQueryFactory;
     final UserMapper userMapper;
     final FeignUserController userController;
@@ -68,12 +65,7 @@ public class PrivateEventServiceImpl implements PrivateEventService {
                 .orElseThrow(() -> new NotFoundException("Даты не заданы"))
                 .getEventDate();
 
-        Map<String, Long> viewMap = statRestClient
-                .stats(LocalDateTime.now(), end, uris.stream().toList(), false).stream()
-                .collect(Collectors.groupingBy(ViewStatsDto::getUri, Collectors.summingLong(ViewStatsDto::getHits)));
-
         return events.stream().peek(shortDto -> {
-            shortDto.setViews(viewMap.getOrDefault("/events/" + shortDto.getId(), 0L));
             shortDto.setConfirmedRequests(confirmedRequestsMap.getOrDefault(shortDto.getId(), 0L));
         }).toList();
     }

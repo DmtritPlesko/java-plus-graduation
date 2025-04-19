@@ -13,7 +13,9 @@ import services.event.model.Event;
 import services.event.repository.EventRepository;
 import services.event.service.EventService;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -41,6 +43,13 @@ public class EventServiceImpl implements EventService {
         eventFullDto.setInitiator(userMapper.toUserShortDto(userController.getBy(event.get().getInitiatorId())));
 
         return eventFullDto;
+    }
+
+    @Override
+    public List<EventFullDto> findEventsByIds(Set<Long> ids) {
+        return repository.findAllByIdIn(ids).stream()
+                .map(mapper::toEventFullDto)
+                .toList();
     }
 }
 
