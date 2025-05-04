@@ -23,7 +23,8 @@ public class PrivateEventController {
     final PrivateEventService privateEventService;
 
     @GetMapping
-    public List<EventShortDto> getAllBy(@PathVariable long userId, @RequestParam(defaultValue = "0") int from,
+    public List<EventShortDto> getAllBy(@PathVariable long userId,
+                                        @RequestParam(defaultValue = "0") int from,
                                         @RequestParam(defaultValue = "10") int size) {
         return privateEventService.getAllBy(userId, PageRequest.of(from, size));
     }

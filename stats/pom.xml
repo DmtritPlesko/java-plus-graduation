@@ -15,6 +15,12 @@
         <module>stat-dto</module>
         <module>stats-server</module>
         <module>stat-client</module>
+        <module>collector</module>
+        <module>aggregator</module>
+        <module>analyzer</module>
+        <module>serialization</module>
+        <module>serialization/avro</module>
+        <module>serialization/proto</module>
     </modules>
 
     <properties>

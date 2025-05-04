@@ -2,10 +2,7 @@ package ru.practicum.request.controller;
 
 import interaction.controller.FeignRequestController;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.practicum.request.model.RequestStatus;
 import ru.practicum.request.service.RequestService;
 
@@ -29,5 +26,12 @@ public class RequestController implements FeignRequestController {
     @Override
     public Map<Long, Long> getConfirmedRequestMap(List<Long> eventIds) {
         return requestService.getConfirmedRequestsMap(eventIds);
+    }
+
+    @GetMapping(path = "/exist/{eventId}/{userId}")
+    @Override
+    public boolean isExist(@PathVariable("eventId") Long eventId,
+                           @PathVariable("userId") Long userId) {
+        return requestService.isExist(eventId, userId);
     }
 }

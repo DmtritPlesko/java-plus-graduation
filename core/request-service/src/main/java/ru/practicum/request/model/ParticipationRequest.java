@@ -9,10 +9,10 @@ import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDateTime;
 
+@Entity
 @Getter
 @Setter
 @ToString
-@Entity
 @Table(name = "requests")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ParticipationRequest {
